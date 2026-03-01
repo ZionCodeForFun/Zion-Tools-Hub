@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { IoLocationOutline } from 'react-icons/io5';
-import '../styles/ProductCard.css';
+import '../styles/productCard.css';
 
 export default function ProductCard({ product }) {
   const sliderRef = useRef(null);
