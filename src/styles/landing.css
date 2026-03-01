@@ -1,0 +1,16 @@
+.landing {
+  min-height: 100vh;
+  padding-bottom: 40px;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
