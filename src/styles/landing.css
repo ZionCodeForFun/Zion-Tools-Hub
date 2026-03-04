@@ -14,3 +14,10 @@ a {
   text-decoration: none;
   color: inherit;
 }
+
+/* shared message style */
+.empty-message {
+  text-align: center;
+  color: #555;
+  padding: 40px 0;
+}

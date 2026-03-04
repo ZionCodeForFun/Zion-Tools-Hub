@@ -6,7 +6,6 @@ export default function ProductCard({ product }) {
   const sliderRef = useRef(null);
   const [showRightIndicator, setShowRightIndicator] = useState(true);
   
-  // Handle scroll to update indicator visibility
   const handleScroll = () => {
     if (sliderRef.current) {
       const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current;
@@ -39,13 +38,12 @@ export default function ProductCard({ product }) {
           ))}
         </div>
         
-        {/* Scroll indicator - only show if more than 1 image */}
         {product.images.length > 1 && showRightIndicator && (
           <div className="product-image-indicator"></div>
         )}
         
         {product.free_delivery && (
-          <div className="product-badge">Free Delivery</div>
+          <div className="product-badge">Free Delivery within Lagos</div>
         )}
       </div>
       

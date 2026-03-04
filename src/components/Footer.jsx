@@ -1,6 +1,15 @@
-import React from 'react';
-import { IoMail, IoCall, IoLogoWhatsapp, IoLocation } from 'react-icons/io5';
-import '../styles/footer.css';
+import React from "react";
+import {
+  IoMail,
+  IoCall,
+  IoLogoWhatsapp,
+  IoLocation,
+  IoLogoFacebook,
+  IoLogoTiktok,
+} from "react-icons/io5";
+import "../styles/footer.css";
+import { Link } from "react-router-dom";
+import { BsTwitterX } from "react-icons/bs";
 
 export default function Footer() {
   return (
@@ -9,7 +18,9 @@ export default function Footer() {
         {/* Business Info Section */}
         <div className="footer-main">
           <div className="footer-brand">Zion Tools Hub</div>
-          <p className="footer-tagline">Your trusted marketplace for quality tools and equipment</p>
+          <p className="footer-tagline">
+            Your trusted marketplace for quality tools and equipment
+          </p>
         </div>
 
         {/* Contact Information */}
@@ -17,17 +28,25 @@ export default function Footer() {
           <div className="footer-section">
             <h3 className="footer-section-title">Contact Us</h3>
             <div className="footer-contact-list">
-              <a href="mailto:ziontoolshub@gmail.com" className="footer-contact-item">
+              <a
+                href="mailto:ziontoolshub@gmail.com"
+                className="footer-contact-item"
+              >
                 <IoMail size={18} />
                 <span>ziontoolshub@gmail.com</span>
               </a>
               <a href="tel:+2348012345678" className="footer-contact-item">
                 <IoCall size={18} />
-                <span>+234 801 234 5678</span>
+                <span>+234 704 968 5365</span>
               </a>
-              <a href="https://wa.me/2348012345678" className="footer-contact-item" target="_blank" rel="noopener noreferrer">
+              <a
+                href="https://wa.me/2347049685365"
+                className="footer-contact-item"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <IoLogoWhatsapp size={18} />
-                <span>+234 801 234 5678</span>
+                <span>+234 704 968 5365</span>
               </a>
             </div>
           </div>
@@ -36,17 +55,56 @@ export default function Footer() {
             <h3 className="footer-section-title">Location</h3>
             <div className="footer-contact-item">
               <IoLocation size={18} />
-              <span>123 Market Street, Ikeja<br />Lagos, Nigeria</span>
+              <span>
+                Mandalas (Lagos Island)
+                <br />
+                Lagos, Nigeria
+              </span>
             </div>
           </div>
 
           <div className="footer-section" id="about">
             <h3 className="footer-section-title">Quick Links</h3>
             <div className="footer-links">
-              <a href="#" className="footer-link">Home</a>
-              <a href="#about" className="footer-link">About Us</a>
-              <a href="#contact" className="footer-link">Contact</a>
-              <a href="#categories" className="footer-link">Categories</a>
+              <Link to={"/"} className="footer-link">
+                Home
+              </Link>
+              <Link to={"/about"} className="footer-link">
+                About Us
+              </Link>
+              <Link to={"/contact"} className="footer-link">
+                Contact
+              </Link>
+            </div>
+          </div>
+
+          <div className="footer-section">
+            <h3 className="footer-section-title">Follow Us</h3>
+            <div className="footer-social">
+              <a
+                href="https://www.facebook.com/share/1CByq9k37C/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="footer-social-link"
+              >
+                <IoLogoFacebook size={24} />
+              </a>
+              <a
+                href="https://x.com/ziontoolshub"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="footer-social-link"
+              >
+                <BsTwitterX size={24} />
+              </a>
+              <a
+                href="https://tiktok.com/@ziontoolshub"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="footer-social-link"
+              >
+                <IoLogoTiktok size={24} />
+              </a>
             </div>
           </div>
         </div>
