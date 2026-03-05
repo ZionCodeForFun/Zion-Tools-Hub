@@ -1,4 +1,3 @@
-
 .contactpage {
   min-height: 100vh;
   background-color: #ffffff;
@@ -62,6 +61,7 @@
   animation: fadeInUp 0.6s ease-out forwards;
   opacity: 0;
   transform: translateY(20px);
+  min-height: 100%;
 }
 
 .contactpage-card:nth-child(1) {
@@ -125,6 +125,12 @@
   color: #333;
   margin: 0;
   font-weight: 500;
+}
+
+@media (min-width: 480px) {
+  .contactpage-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (min-width: 768px) {

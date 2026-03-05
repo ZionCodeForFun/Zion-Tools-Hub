@@ -4,7 +4,7 @@ import '../../styles/floating-whatsapp.css';
 
 export default function FloatingWhatsApp() {
   const handleWhatsAppClick = () => {
-    window.open('https://wa.me/2348166288535', '_blank');
+    window.open('https://wa.me/2347049685365', '_blank');
   };
 
   return (
