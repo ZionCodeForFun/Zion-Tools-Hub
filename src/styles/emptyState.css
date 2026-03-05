@@ -1,0 +1,60 @@
+/* Empty State Styles */
+.emptystate-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  color: #444;
+  min-height: 200px;
+}
+
+.emptystate-icon {
+  color: #ccc;
+  margin-bottom: 16px;
+}
+
+.emptystate-title {
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.emptystate-description {
+  font-size: 14px;
+  margin: 0 0 20px 0;
+  color: #666;
+  max-width: 300px;
+}
+
+.emptystate-whatsapp-btn {
+  display: inline-block;
+  background-color: #25d366;
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.3s;
+}
+
+.emptystate-whatsapp-btn:hover {
+  background-color: #1ebe5d;
+}
+
+@media (min-width: 768px) {
+  .emptystate-container {
+    padding: 80px 20px;
+  }
+
+  .emptystate-title {
+    font-size: 26px;
+  }
+
+  .emptystate-description {
+    font-size: 16px;
+    max-width: 400px;
+  }
+}

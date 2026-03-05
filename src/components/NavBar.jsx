@@ -30,12 +30,16 @@ export default function Navbar() {
         </div>
 
         <div className="navbar-actions">
-          <button className="navbar-icon-btn navbar-cart-btn" aria-label="Cart">
+          <Link
+            to="/cart"
+            className="navbar-icon-btn navbar-cart-btn"
+            aria-label="Cart"
+          >
             <IoCart size={22} />
             {cartItemCount > 0 && (
               <span className="navbar-cart-badge">{cartItemCount}</span>
             )}
-          </button>
+          </Link>
 
           <button
             className="navbar-icon-btn navbar-menu-btn"

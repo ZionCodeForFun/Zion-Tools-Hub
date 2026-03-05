@@ -6,6 +6,7 @@ import Hero from "./home/Hero";
 import Categories from "./home/Categories";
 import Section from "../components/Section";
 import ProductGrid from "../components/ProductGrid";
+import EmptyState from "../components/EmptyState";
 import Footer from "../components/Footer";
 import FloatingWhatsApp from "./home/FloatingWhatsApp";
 import { products } from "../data/MockData";
@@ -45,14 +46,26 @@ const Landing = () => {
       )}
 
       <Section title={searchQuery ? "Search Results" : "Recently Added"}>
-        {recentlyAdded.length > 0 ? (
+        {searchQuery ? (
+          filteredProducts.length > 0 ? (
+            <ProductGrid products={filteredProducts} />
+          ) : (
+            <EmptyState
+              messageTitle="No products found"
+              messageDescription="We couldn't find this tool right now."
+              whatsappMessage={`Hello, I'm looking for ${searchQuery} but couldn't find it on Zion Tools Hub. Please can you help?`}
+            />
+          )
+        ) : recentlyAdded.length > 0 ? (
           <ProductGrid products={recentlyAdded} />
         ) : (
-          <p className="empty-message">
-            {searchQuery
-              ? "No tools found matching your search."
-              : "No products found."}
-          </p>
+          <EmptyState
+            messageTitle="No products available"
+            messageDescription="We couldn't find any tools right now."
+            whatsappMessage={
+              "Hello, I'm browsing Zion Tools Hub and didn't see anything available. Can you assist?"
+            }
+          />
         )}
       </Section>
 

@@ -6,6 +6,7 @@ import SearchBar from "../components/SearchBar";
 import Footer from "../components/Footer";
 import ProductGrid from "../components/ProductGrid";
 import Section from "../components/Section";
+import EmptyState from "../components/EmptyState";
 import { products, categories } from "../data/MockData";
 import { useSearch } from "../context/SearchContext";
 import "../styles/landing.css"; // reuse landing layout styles
@@ -42,11 +43,15 @@ export default function CategoryPage() {
         {filteredProducts.length > 0 ? (
           <ProductGrid products={filteredProducts} />
         ) : (
-          <p className="empty-message">
-            {searchQuery
-              ? "No products found matching your search in this category."
-              : "No products found in this category."}
-          </p>
+          <EmptyState
+            messageTitle="No products found"
+            messageDescription="We couldn't find this tool right now."
+            whatsappMessage={
+              searchQuery
+                ? `Hello, I'm looking for ${searchQuery} in the ${category?.name || slug} category but couldn't find any. Please can you help?`
+                : `I'm looking for tools in the ${category?.name || slug} category but couldn't find any available.`
+            }
+          />
         )}
       </Section>
 

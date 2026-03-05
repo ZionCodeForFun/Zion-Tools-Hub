@@ -1,11 +1,13 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { IoLocationOutline } from 'react-icons/io5';
-import '../styles/productCard.css';
+import React, { useRef, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { IoLocationOutline } from "react-icons/io5";
+import "../styles/productCard.css";
 
 export default function ProductCard({ product }) {
   const sliderRef = useRef(null);
+  const navigate = useNavigate();
   const [showRightIndicator, setShowRightIndicator] = useState(true);
-  
+
   const handleScroll = () => {
     if (sliderRef.current) {
       const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current;
@@ -14,22 +16,26 @@ export default function ProductCard({ product }) {
     }
   };
 
+  const handleCardClick = () => {
+    navigate(`/product/${product.id}`);
+  };
+
   useEffect(() => {
     const slider = sliderRef.current;
     if (slider && product.images.length > 1) {
-      slider.addEventListener('scroll', handleScroll);
-      return () => slider.removeEventListener('scroll', handleScroll);
+      slider.addEventListener("scroll", handleScroll);
+      return () => slider.removeEventListener("scroll", handleScroll);
     }
   }, [product.images]);
 
   return (
-    <div className="product-card">
+    <div className="product-card" onClick={handleCardClick}>
       <div className="product-image-container">
         <div className="product-image-slider" ref={sliderRef}>
           {product.images.map((image, index) => (
             <div key={index} className="product-image-slide">
-              <img 
-                src={image} 
+              <img
+                src={image}
                 alt={`${product.name} - ${index + 1}`}
                 className="product-image"
                 loading="lazy"
@@ -37,16 +43,16 @@ export default function ProductCard({ product }) {
             </div>
           ))}
         </div>
-        
+
         {product.images.length > 1 && showRightIndicator && (
           <div className="product-image-indicator"></div>
         )}
-        
+
         {product.free_delivery && (
           <div className="product-badge">Free Delivery within Lagos</div>
         )}
       </div>
-      
+
       <div className="product-content">
         <div className="product-price">{product.price}</div>
         <div className="product-name">{product.name}</div>
