@@ -79,7 +79,7 @@ export default function ContactPage() {
             </a>
 
             <a
-              href="https://twitter.com/ziontoolshub"
+              href="https://x.com/ziontoolshub"
               target="_blank"
               rel="noopener noreferrer"
               className="contactpage-card"
@@ -90,7 +90,7 @@ export default function ContactPage() {
             </a>
 
             <a
-              href="https://tiktok.com/@ziontoolshub"
+              href="https://tiktok.com/ziontoolshub"
               target="_blank"
               rel="noopener noreferrer"
               className="contactpage-card"
