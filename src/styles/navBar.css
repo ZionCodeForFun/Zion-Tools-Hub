@@ -19,13 +19,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 50px;
+  height: 20px;
 }
 
 .navbar-logo img {
   height: 100%;
   width: auto;
-  max-width: 150px;
+  max-width: 120px;
   object-fit: contain;
 }
 
