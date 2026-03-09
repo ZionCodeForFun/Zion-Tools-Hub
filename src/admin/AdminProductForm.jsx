@@ -9,6 +9,7 @@ export default function AdminProductForm() {
     category: "",
     condition: "New",
     location: "",
+    description: "",
     free_delivery: false,
     images: [],
     specifications: [{ key: "", value: "" }],
@@ -118,10 +119,11 @@ export default function AdminProductForm() {
       const productData = {
         name: formData.name,
         price: parseFloat(formData.price),
-        category_id: formData.category, // make sure category_id is UUID
+        category_id: formData.category,
         slug,
         condition: formData.condition,
         location: formData.location,
+        description: formData.description,
         free_delivery: formData.free_delivery,
       };
 
@@ -174,6 +176,7 @@ export default function AdminProductForm() {
         category: "",
         condition: "New",
         location: "",
+        description: "",
         free_delivery: false,
         images: [],
         specifications: [{ key: "", value: "" }],
@@ -195,6 +198,7 @@ export default function AdminProductForm() {
       category: product.category_id,
       condition: product.condition,
       location: product.location,
+      description: product.description || "",
       free_delivery: product.free_delivery,
       images: product.product_images.map((img) => img.image_url),
       specifications: product.product_specifications.map((spec) => ({
@@ -237,6 +241,7 @@ export default function AdminProductForm() {
           <option value="Used">Used</option>
         </select>
         <input type="text" name="location" placeholder="Location" className="adminproductform-input" value={formData.location} onChange={handleInputChange} required />
+        <textarea name="description" placeholder="Product Description" className="adminproductform-textarea" value={formData.description} onChange={handleInputChange} rows="4" />
         <label className="adminproductform-checkbox">
           <input type="checkbox" name="free_delivery" checked={formData.free_delivery} onChange={handleInputChange} />
           Free Delivery

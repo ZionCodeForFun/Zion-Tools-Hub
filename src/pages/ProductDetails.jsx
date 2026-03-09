@@ -209,13 +209,7 @@ Please confirm availability.`;
               Product Description
             </h2>
             <p className="productdetails-description">
-              This professional-grade tool is designed for heavy-duty industrial
-              applications. Built with premium materials and precision
-              engineering, it delivers superior performance and durability.
-              Whether you're running a workshop, garage, or construction site,
-              this tool is built to withstand years of intensive use. Each unit
-              undergoes rigorous quality control to ensure you receive only the
-              best products.
+              {product.description || "No description available for this product."}
             </p>
           </section>
 
