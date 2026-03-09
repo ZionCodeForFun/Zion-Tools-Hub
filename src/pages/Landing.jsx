@@ -9,12 +9,14 @@ import ProductGrid from "../components/ProductGrid";
 import EmptyState from "../components/EmptyState";
 import Footer from "../components/Footer";
 import FloatingWhatsApp from "./home/FloatingWhatsApp";
-import { products } from "../data/MockData";
+import Spinner from "../components/Spinner";
+import useProducts from "../data/ProductApi";
 import { useSearch } from "../context/SearchContext";
 import "../styles/landing.css";
 
 const Landing = () => {
   const { searchQuery } = useSearch();
+  const { products, loadingProducts, errorProducts } = useProducts();
 
   const filteredProducts = searchQuery.trim()
     ? products.filter(
@@ -28,9 +30,27 @@ const Landing = () => {
     .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
     .slice(0, 6);
 
-  const popularTools = filteredProducts.filter(
-    (product) => product.is_featured,
-  );
+  const popularTools = [...filteredProducts]
+    .sort(() => Math.random() - 0.5) // Random shuffle
+    .slice(0, 6); // Show 6 random products
+
+  if (loadingProducts) {
+    return (
+      <div className="landing">
+        <Navbar />
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (errorProducts) {
+    return (
+      <div className="landing">
+        <Navbar />
+        <div className="landing-error">Error: {errorProducts}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="landing">

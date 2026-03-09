@@ -7,13 +7,18 @@ import Footer from "../components/Footer";
 import ProductGrid from "../components/ProductGrid";
 import Section from "../components/Section";
 import EmptyState from "../components/EmptyState";
-import { products, categories } from "../data/MockData";
+import useProducts from "../data/ProductApi";
+import useCategories from "../data/CatigoriesApi";
+import Spinner from "../components/Spinner";
 import { useSearch } from "../context/SearchContext";
 import "../styles/landing.css"; // reuse landing layout styles
 
 export default function CategoryPage() {
   const { slug } = useParams();
   const { searchQuery } = useSearch();
+  const { products, loadingProducts } = useProducts();
+  const { categories, loadingCategories } = useCategories();
+
   const category = categories.find((c) => c.slug === slug);
 
   let filteredProducts = products.filter((p) => p.category === slug);
@@ -25,6 +30,10 @@ export default function CategoryPage() {
         product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         product.location.toLowerCase().includes(searchQuery.toLowerCase()),
     );
+  }
+
+  if (loadingProducts || loadingCategories) {
+    return <Spinner />;
   }
 
   return (

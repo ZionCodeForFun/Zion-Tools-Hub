@@ -1,0 +1,227 @@
+/* Admin Product Form Styles */
+.adminproductform-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.adminproductform-title {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.adminproductform-error {
+  background: #f8d7da;
+  color: #721c24;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.adminproductform-form {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 40px;
+}
+
+.adminproductform-input,
+.adminproductform-select,
+.adminproductform-file {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.adminproductform-checkbox {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  font-size: 1rem;
+}
+
+.adminproductform-checkbox input {
+  margin-right: 10px;
+}
+
+.adminproductform-image-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.adminproductform-image-item {
+  position: relative;
+  display: inline-block;
+}
+
+.adminproductform-image-thumb {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.adminproductform-image-remove {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: red;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.adminproductform-specifications h3 {
+  margin-bottom: 10px;
+}
+
+.adminproductform-spec-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  align-items: center;
+}
+
+.adminproductform-spec-input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.adminproductform-spec-remove,
+.adminproductform-spec-add {
+  padding: 8px 12px;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.adminproductform-spec-add {
+  background: #28a745;
+  margin-top: 10px;
+}
+
+.adminproductform-submit {
+  padding: 12px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  width: 100%;
+}
+
+.adminproductform-submit:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.adminproductform-products h2 {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+.adminproductform-product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.adminproductform-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.adminproductform-card-images {
+  display: flex;
+  overflow-x: auto;
+}
+
+.adminproductform-card-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.adminproductform-card-content {
+  padding: 15px;
+}
+
+.adminproductform-card-title {
+  font-size: 1.2rem;
+  margin-bottom: 5px;
+}
+
+.adminproductform-card-price {
+  font-weight: bold;
+  color: #007bff;
+  margin-bottom: 5px;
+}
+
+.adminproductform-card-category,
+.adminproductform-card-location {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.adminproductform-card-badge,
+.adminproductform-card-condition {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.8rem;
+  margin-right: 5px;
+}
+
+.adminproductform-card-badge {
+  background: #28a745;
+  color: white;
+}
+
+.adminproductform-card-condition {
+  background: #ffc107;
+  color: #333;
+}
+
+.adminproductform-card-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.adminproductform-card-edit,
+.adminproductform-card-delete {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.adminproductform-card-edit {
+  background: #ffc107;
+  color: #333;
+}
+
+.adminproductform-card-delete {
+  background: #dc3545;
+  color: white;
+}

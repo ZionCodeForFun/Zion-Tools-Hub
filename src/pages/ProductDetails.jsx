@@ -6,15 +6,17 @@ import { IoMdClose } from "react-icons/io";
 import { CiShoppingBasket } from "react-icons/ci";
 import { MdCheckCircle } from "react-icons/md";
 import { useCart } from "../context/CartContext";
-import { products } from "../data/MockData";
+import useProducts from "../data/ProductApi";
 import ProductCard from "../components/ProductCard";
 import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
+import Spinner from "../components/Spinner";
 import "../styles/productdetails.css";
 
 export default function ProductDetails() {
   const { id } = useParams();
   const { cartItems, addToCart } = useCart();
+  const { products, loadingProducts, errorProducts } = useProducts();
   const [product, setProduct] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showContactModal, setShowContactModal] = useState(false);
@@ -24,22 +26,24 @@ export default function ProductDetails() {
   const sliderRef = useRef(null);
   const imageSliderRef = useRef(null);
 
-  // Get product data
+  // Get product data from Supabase
   useEffect(() => {
-    const foundProduct = products.find((p) => p.id === parseInt(id));
-    if (foundProduct) {
-      setProduct(foundProduct);
+    if (products.length > 0) {
+      const foundProduct = products.find((p) => p.id === id);
+      if (foundProduct) {
+        setProduct(foundProduct);
 
-      // Get related products from same category
-      const related = products
-        .filter(
-          (p) =>
-            p.category === foundProduct.category && p.id !== foundProduct.id,
-        )
-        .slice(0, 8);
-      setRelatedProducts(related);
+        // Get related products from same category
+        const related = products
+          .filter(
+            (p) =>
+              p.category === foundProduct.category && p.id !== foundProduct.id,
+          )
+          .slice(0, 8);
+        setRelatedProducts(related);
+      }
     }
-  }, [id]);
+  }, [id, products]);
 
   // Handle image scroll
   const handleImageScroll = () => {
@@ -99,8 +103,16 @@ Please confirm availability.`;
     window.location.href = `https://wa.me/2347049685365?text=${encodedMessage}`;
   };
 
+  if (loadingProducts) {
+    return <Spinner />;
+  }
+
+  if (errorProducts) {
+    return <div className="productdetails-error">Error: {errorProducts}</div>;
+  }
+
   if (!product) {
-    return <div className="productdetails-loading">Loading product...</div>;
+    return <div className="productdetails-not-found">Product not found</div>;
   }
 
   return (
@@ -177,11 +189,12 @@ Please confirm availability.`;
           <section className="productdetails-section">
             <h2 className="productdetails-section-title">Specifications</h2>
             <ul className="productdetails-specs-list">
-              <li>Capacity: 10 Ton</li>
-              <li>Material: Hardened Steel</li>
-              <li>Weight: 5kg</li>
-              <li>Usage: Mechanical Workshop / Garage</li>
-              <li>Brand: INGCO</li>
+              {Object.entries(product.specifications || {}).map(([key, value]) => (
+                <li key={key}>{key}: {value}</li>
+              ))}
+              {(!product.specifications || Object.keys(product.specifications).length === 0) && (
+                <li>No specifications available</li>
+              )}
             </ul>
           </section>
 

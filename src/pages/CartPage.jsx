@@ -85,8 +85,12 @@ Please confirm availability.`;
           <>
             <div className="cartpage-items">
               {cartItems.map((item) => {
-                const priceNum =
-                  parseFloat(item.price.replace(/[^0-9]/g, "")) || 0;
+                // Handle both string prices (e.g., "₦1,234") and numeric prices
+                const priceString =
+                  typeof item.price === "string"
+                    ? item.price.replace(/[^0-9]/g, "")
+                    : item.price;
+                const priceNum = parseFloat(priceString) || 0;
                 const subtotal = priceNum * item.quantity;
 
                 return (

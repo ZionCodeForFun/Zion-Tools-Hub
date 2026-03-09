@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 import AdminHeader from "../components/AdminHeader";
 import AdminSidebar from "../components/AdminSidebar";
+import AdminProductForm from "./AdminProductForm";
+import SkeletonLoader from "../components/SkeletonLoader";
 import "../adminStyles/admin.css";
 
 export default function Dashboard() {
@@ -41,7 +43,7 @@ export default function Dashboard() {
   };
 
   if (loading) {
-    return <div className="admin-container">Loading...</div>;
+    return <SkeletonLoader type="dashboard" />;
   }
 
   return (
@@ -50,8 +52,7 @@ export default function Dashboard() {
       <div className="admin-main">
         <AdminSidebar />
         <div className="admin-content">
-          <h1>Welcome, Admin</h1>
-          <p>This is your dashboard. Add products, manage orders, etc.</p>
+          <AdminProductForm />
         </div>
       </div>
     </div>
