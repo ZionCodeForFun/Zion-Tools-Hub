@@ -13,9 +13,9 @@ export default function Navbar() {
   return (
     <nav className="navbar">
       <div className="navbar-content">
-        <div className="navbar-logo">
+        <Link to={"/"}className="navbar-logo">
           <img src={logo} alt="logo" />
-        </div>
+        </Link>
 
         <div className="navbar-links-desktop">
           <Link to="/" className="navbar-link">
