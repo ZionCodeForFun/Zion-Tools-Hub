@@ -1,8 +1,14 @@
 /* Admin Product Form Styles */
+* {
+  box-sizing: border-box;
+}
+
 .adminproductform-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  overflow: hidden;
+  width: 100%;
 }
 
 .adminproductform-title {
@@ -24,6 +30,9 @@
   padding: 20px;
   border-radius: 8px;
   margin-bottom: 40px;
+  box-sizing: border-box;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 .adminproductform-input,
@@ -35,6 +44,7 @@
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 1rem;
+  box-sizing: border-box;
 }
 
 .adminproductform-checkbox {
@@ -87,16 +97,20 @@
 
 .adminproductform-spec-row {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 10px;
   align-items: center;
+  box-sizing: border-box;
 }
 
 .adminproductform-spec-input {
   flex: 1;
+  min-width: 120px;
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
+  box-sizing: border-box;
 }
 
 .adminproductform-spec-remove,
@@ -137,8 +151,101 @@
 
 .adminproductform-product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .adminproductform-product-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .adminproductform-container {
+    padding: 12px;
+  }
+
+  .adminproductform-form {
+    padding: 15px;
+    margin-bottom: 30px;
+  }
+
+  .adminproductform-title {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+  }
+
+  .adminproductform-input,
+  .adminproductform-select,
+  .adminproductform-file {
+    padding: 8px;
+    margin-bottom: 12px;
+    font-size: 16px;
+  }
+
+  .adminproductform-image-thumb {
+    width: 80px;
+    height: 80px;
+  }
+
+  .adminproductform-spec-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .adminproductform-spec-input {
+    width: 100%;
+  }
+
+  .adminproductform-spec-remove,
+  .adminproductform-spec-add {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .adminproductform-submit {
+    padding: 10px;
+    font-size: 0.95rem;
+  }
+
+  .adminproductform-product-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .adminproductform-card {
+    overflow-x: hidden;
+  }
+
+  .adminproductform-card-content {
+    padding: 8px;
+  }
+
+  .adminproductform-card-title {
+    font-size: 0.95rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .adminproductform-card-price,
+  .adminproductform-card-category,
+  .adminproductform-card-location {
+    font-size: 0.85rem;
+  }
+
+  .adminproductform-card-image {
+    width: 80px;
+    height: 80px;
+  }
+
+  .adminproductform-card-edit,
+  .adminproductform-card-delete {
+    padding: 5px 8px;
+    font-size: 0.8rem;
+    flex: 1;
+  }
 }
 
 .adminproductform-card {
@@ -205,6 +312,9 @@
   margin-top: 10px;
   display: flex;
   gap: 10px;
+  flex-wrap: wrap;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .adminproductform-card-edit,
@@ -214,6 +324,8 @@
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.9rem;
+  flex: 1;
+  min-width: 80px;
 }
 
 .adminproductform-card-edit {

@@ -37,7 +37,7 @@ export default function useProducts() {
         const formattedProducts = productsData.map((product) => {
           // Transform specifications to object
           const specifications = {};
-          product.product_specifications?.forEach(spec => {
+          product.product_specifications?.forEach((spec) => {
             specifications[spec.key] = spec.value;
           });
 

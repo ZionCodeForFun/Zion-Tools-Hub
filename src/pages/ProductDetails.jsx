@@ -189,10 +189,15 @@ Please confirm availability.`;
           <section className="productdetails-section">
             <h2 className="productdetails-section-title">Specifications</h2>
             <ul className="productdetails-specs-list">
-              {Object.entries(product.specifications || {}).map(([key, value]) => (
-                <li key={key}>{key}: {value}</li>
-              ))}
-              {(!product.specifications || Object.keys(product.specifications).length === 0) && (
+              {Object.entries(product.specifications || {}).map(
+                ([key, value]) => (
+                  <li key={key}>
+                    {key}: {value}
+                  </li>
+                ),
+              )}
+              {(!product.specifications ||
+                Object.keys(product.specifications).length === 0) && (
                 <li>No specifications available</li>
               )}
             </ul>
