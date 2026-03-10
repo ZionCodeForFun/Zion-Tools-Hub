@@ -54,11 +54,14 @@ export default function CategoryPage() {
   const handlePageChange = (page) => {
     setCurrentPage(page);
 
-    // Scroll to top smoothly
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    // Scroll to product grid smoothly
+    const productGrid = document.querySelector(".product-grid");
+    if (productGrid) {
+      productGrid.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else {
+      // fallback to top
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
   };
 
   if (loadingProducts || loadingCategories) {
