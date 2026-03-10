@@ -73,3 +73,39 @@
     font-size: 14px;
   }
 }
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin: 40px 0;
+  flex-wrap: wrap;
+}
+
+.pagination-btn,
+.pagination-number {
+  border: 1px solid #e0e0e0;
+  background: #fff;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.pagination-number.active {
+  background: #d6590b;
+  color: white;
+  border-color: #d6590b;
+  font-weight: 600;
+}
+
+.pagination-btn:hover,
+.pagination-number:hover {
+  border-color: #d6590b;
+  color: #d6590b;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
