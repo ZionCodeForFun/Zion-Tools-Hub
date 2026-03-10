@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import Navbar from "../components/NavBar";
 import BackToHome from "../components/BackToHome";
@@ -11,13 +11,16 @@ import useProducts from "../data/ProductApi";
 import useCategories from "../data/CatigoriesApi";
 import Spinner from "../components/Spinner";
 import { useSearch } from "../context/SearchContext";
-import "../styles/landing.css"; // reuse landing layout styles
+import "../styles/landing.css";
 
 export default function CategoryPage() {
   const { slug } = useParams();
   const { searchQuery } = useSearch();
   const { products, loadingProducts } = useProducts();
   const { categories, loadingCategories } = useCategories();
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 6;
 
   const category = categories.find((c) => c.slug === slug);
 
@@ -28,9 +31,20 @@ export default function CategoryPage() {
     filteredProducts = filteredProducts.filter(
       (product) =>
         product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.location.toLowerCase().includes(searchQuery.toLowerCase()),
+        product.location.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }
+
+  // Pagination logic
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+
+  const currentProducts = filteredProducts.slice(
+    indexOfFirstProduct,
+    indexOfLastProduct
+  );
+
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
   if (loadingProducts || loadingCategories) {
     return <Spinner />;
@@ -50,15 +64,53 @@ export default function CategoryPage() {
         }
       >
         {filteredProducts.length > 0 ? (
-          <ProductGrid products={filteredProducts} />
+          <>
+            <ProductGrid products={currentProducts} />
+
+            {totalPages > 1 && (
+              <div className="pagination">
+                <button
+                  className="pagination-btn"
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                >
+                  Prev
+                </button>
+
+                {[...Array(totalPages)].map((_, index) => (
+                  <button
+                    key={index}
+                    className={`pagination-number ${
+                      currentPage === index + 1 ? "active" : ""
+                    }`}
+                    onClick={() => setCurrentPage(index + 1)}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
+
+                <button
+                  className="pagination-btn"
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </>
         ) : (
           <EmptyState
             messageTitle="No products found"
             messageDescription="We couldn't find this tool right now."
             whatsappMessage={
               searchQuery
-                ? `Hello, I'm looking for ${searchQuery} in the ${category?.name || slug} category but couldn't find any. Please can you help?`
-                : `I'm looking for tools in the ${category?.name || slug} category but couldn't find any available.`
+                ? `Hello, I'm looking for ${searchQuery} in the ${
+                    category?.name || slug
+                  } category but couldn't find any. Please can you help?`
+                : `I'm looking for tools in the ${
+                    category?.name || slug
+                  } category but couldn't find any available.`
             }
           />
         )}
