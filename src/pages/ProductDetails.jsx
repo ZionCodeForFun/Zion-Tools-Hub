@@ -184,7 +184,7 @@ Please confirm availability.`;
               {product.product_specifications?.length > 0 ? (
                 product.product_specifications.map((spec, index) => (
                   <li key={index}>
-                    {spe_key}: {spec_value}
+     {spec.spec_key}: {spec.spec_value}
                   </li>
                 ))
               ) : (
@@ -263,7 +263,22 @@ Please confirm availability.`;
           </div>
         </div>
       </div>
+<div className="productdetails-sticky-cta">
+  <button
+    className="productdetails-cta-button productdetails-cta-basket"
+    onClick={handleAddToBasket}
+  >
+    <CiShoppingBasket size={18} />
+    Add to Basket
+  </button>
 
+  <button
+    className="productdetails-cta-button productdetails-cta-contact"
+    onClick={handleContactClick}
+  >
+    Contact to Order
+  </button>
+</div>
       <Footer />
     </div>
   );
