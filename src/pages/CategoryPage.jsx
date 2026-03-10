@@ -83,36 +83,39 @@ export default function CategoryPage() {
             <ProductGrid products={currentProducts} />
 
             {totalPages > 1 && (
-  <div className="pagination">
-    <button
-      className="pagination-btn"
-      disabled={currentPage === 1}
-      onClick={() => handlePageChange(currentPage - 1)}
-    >
-      Prev
-    </button>
+              <div className="pagination">
+                {/* Prev Button */}
+                <button
+                  className="pagination-btn"
+                  disabled={currentPage === 1}
+                  onClick={() => handlePageChange(currentPage - 1)}
+                >
+                  Prev
+                </button>
 
-    {[...Array(totalPages)].map((_, index) => (
-      <button
-        key={index}
-        className={`pagination-number ${
-          currentPage === index + 1 ? "active" : ""
-        }`}
-        onClick={() => handlePageChange(index + 1)}
-      >
-        {index + 1}
-      </button>
-    ))}
+                {/* Number Buttons */}
+                {[...Array(totalPages)].map((_, index) => (
+                  <button
+                    key={index}
+                    className={`pagination-number ${
+                      currentPage === index + 1 ? "active" : ""
+                    }`}
+                    onClick={() => handlePageChange(index + 1)}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
 
-    <button
-      className="pagination-btn"
-      disabled={currentPage === totalPages}
-      onClick={() => handlePageChange(currentPage + 1)}
-    >
-      Next
-    </button>
-  </div>
-)}
+                {/* Next Button */}
+                <button
+                  className="pagination-btn"
+                  disabled={currentPage === totalPages}
+                  onClick={() => handlePageChange(currentPage + 1)}
+                >
+                  Next
+                </button>
+              </div>
+            )}
           </>
         ) : (
           <EmptyState
