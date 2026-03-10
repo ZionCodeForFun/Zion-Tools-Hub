@@ -26,24 +26,27 @@ export default function AdminProductForm() {
     fetchProducts();
   }, []);
 
-  // Fetch all categories
+  // Fetch categories
   const fetchCategories = async () => {
     const { data, error } = await supabase.from("categories").select("*");
     if (error) setError("Failed to fetch categories: " + error.message);
     else setCategories(data);
   };
 
-  // Fetch all products with images & specs
+  // Fetch products with images and specifications
   const fetchProducts = async () => {
-    const { data, error } = await supabase.from("products").select(`
-      *,
-      product_specifications (*),
-      product_images (*)
-    `);
+    const { data, error } = await supabase
+      .from("products")
+      .select(`
+        *,
+        product_images (*),
+        product_specifications (*)
+      `);
     if (error) setError("Failed to fetch products: " + error.message);
     else setProducts(data);
   };
 
+  // Handle input changes
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData({
@@ -52,6 +55,7 @@ export default function AdminProductForm() {
     });
   };
 
+  // Handle image selection
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
     setFormData({
@@ -60,11 +64,13 @@ export default function AdminProductForm() {
     });
   };
 
+  // Remove image from formData
   const removeImage = (index) => {
     const newImages = formData.images.filter((_, i) => i !== index);
     setFormData({ ...formData, images: newImages });
   };
 
+  // Specifications handlers
   const addSpecification = () => {
     setFormData({
       ...formData,
@@ -84,7 +90,7 @@ export default function AdminProductForm() {
     setFormData({ ...formData, specifications: newSpecs });
   };
 
-  // Upload a single image and return public URL
+  // Upload image and return public URL
   const uploadImage = async (file) => {
     const fileExt = file.name.split(".").pop();
     const fileName = `${Math.random()}.${fileExt}`;
@@ -103,19 +109,24 @@ export default function AdminProductForm() {
     return data.publicUrl;
   };
 
+  // Submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
     try {
-      // Upload all images and get public URLs
-      const imageUrls = await Promise.all(formData.images.map(uploadImage));
+      // Upload new images if needed
+      const imageUrls = await Promise.all(
+        formData.images.map(async (img) => {
+          if (typeof img === "string") return img;
+          return await uploadImage(img);
+        })
+      );
 
-      // Generate slug
-      const slug = formData.name.toLowerCase().replace(/\s+/g, "-") + "-" + Date.now();
+      const slug =
+        formData.name.toLowerCase().replace(/\s+/g, "-") + "-" + Date.now();
 
-      // Prepare product data
       const productData = {
         name: formData.name,
         price: parseFloat(formData.price),
@@ -142,20 +153,28 @@ export default function AdminProductForm() {
 
         // Delete old images & specs
         await supabase.from("product_images").delete().eq("product_id", editingId);
-        await supabase.from("product_specifications").delete().eq("product_id", editingId);
+        await supabase
+          .from("product_specifications")
+          .delete()
+          .eq("product_id", editingId);
       } else {
         // Insert new product
-        const { data, error } = await supabase.from("products").insert(productData).select();
+        const { data, error } = await supabase
+          .from("products")
+          .insert(productData)
+          .select();
         if (error) throw error;
         productId = data[0].id;
       }
 
-      // Insert images into DB
+      // Insert images
       const imageInserts = imageUrls.map((url) => ({
         product_id: productId,
         image_url: url,
       }));
-      const { error: imageError } = await supabase.from("product_images").insert(imageInserts);
+      const { error: imageError } = await supabase
+        .from("product_images")
+        .insert(imageInserts);
       if (imageError) throw imageError;
 
       // Insert specifications
@@ -166,7 +185,9 @@ export default function AdminProductForm() {
           key: spec.key,
           value: spec.value,
         }));
-      const { error: specError } = await supabase.from("product_specifications").insert(specInserts);
+      const { error: specError } = await supabase
+        .from("product_specifications")
+        .insert(specInserts);
       if (specError) throw specError;
 
       // Reset form
@@ -191,6 +212,7 @@ export default function AdminProductForm() {
     }
   };
 
+  // Edit product
   const handleEdit = (product) => {
     setFormData({
       name: product.name,
@@ -209,6 +231,7 @@ export default function AdminProductForm() {
     setEditingId(product.id);
   };
 
+  // Delete product
   const handleDelete = async (id) => {
     if (!confirm("Are you sure you want to delete this product?")) return;
 
@@ -225,47 +248,141 @@ export default function AdminProductForm() {
 
   return (
     <div className="adminproductform-container">
-      <h1 className="adminproductform-title">{editingId ? "Edit Product" : "Add New Product"}</h1>
+      <h1 className="adminproductform-title">
+        {editingId ? "Edit Product" : "Add New Product"}
+      </h1>
       {error && <div className="adminproductform-error">{error}</div>}
       <form className="adminproductform-form" onSubmit={handleSubmit}>
-        <input type="text" name="name" placeholder="Product Name" className="adminproductform-input" value={formData.name} onChange={handleInputChange} required />
-        <input type="number" name="price" placeholder="Price" className="adminproductform-input" value={formData.price} onChange={handleInputChange} required />
-        <select name="category" className="adminproductform-select" value={formData.category} onChange={handleInputChange} required>
+        <input
+          type="text"
+          name="name"
+          placeholder="Product Name"
+          className="adminproductform-input"
+          value={formData.name}
+          onChange={handleInputChange}
+          required
+        />
+        <input
+          type="number"
+          name="price"
+          placeholder="Price"
+          className="adminproductform-input"
+          value={formData.price}
+          onChange={handleInputChange}
+          required
+        />
+        <select
+          name="category"
+          className="adminproductform-select"
+          value={formData.category}
+          onChange={handleInputChange}
+          required
+        >
           <option value="">Select Category</option>
           {categories.map((cat) => (
-            <option key={cat.id} value={cat.id}>{cat.name}</option>
+            <option key={cat.id} value={cat.id}>
+              {cat.name}
+            </option>
           ))}
         </select>
-        <select name="condition" className="adminproductform-select" value={formData.condition} onChange={handleInputChange}>
+        <select
+          name="condition"
+          className="adminproductform-select"
+          value={formData.condition}
+          onChange={handleInputChange}
+        >
           <option value="New">New</option>
           <option value="Used">Used</option>
         </select>
-        <input type="text" name="location" placeholder="Location" className="adminproductform-input" value={formData.location} onChange={handleInputChange} required />
-        <textarea name="description" placeholder="Product Description" className="adminproductform-textarea" value={formData.description} onChange={handleInputChange} rows="4" />
+        <input
+          type="text"
+          name="location"
+          placeholder="Location"
+          className="adminproductform-input"
+          value={formData.location}
+          onChange={handleInputChange}
+          required
+        />
+        <textarea
+          name="description"
+          placeholder="Product Description"
+          className="adminproductform-textarea"
+          value={formData.description}
+          onChange={handleInputChange}
+          rows="4"
+        />
         <label className="adminproductform-checkbox">
-          <input type="checkbox" name="free_delivery" checked={formData.free_delivery} onChange={handleInputChange} />
+          <input
+            type="checkbox"
+            name="free_delivery"
+            checked={formData.free_delivery}
+            onChange={handleInputChange}
+          />
           Free Delivery
         </label>
-        <input type="file" multiple accept="image/*" onChange={handleImageChange} className="adminproductform-file" />
+        <input
+          type="file"
+          multiple
+          accept="image/*"
+          onChange={handleImageChange}
+          className="adminproductform-file"
+        />
+
+        {/* Image previews */}
         <div className="adminproductform-image-preview">
           {formData.images.map((image, index) => (
             <div key={index} className="adminproductform-image-item">
-              <img src={typeof image === "string" ? image : URL.createObjectURL(image)} alt={`Preview ${index}`} className="adminproductform-image-thumb" />
-              <button type="button" className="adminproductform-image-remove" onClick={() => removeImage(index)}>×</button>
+              <img
+                src={typeof image === "string" ? image : URL.createObjectURL(image)}
+                alt={`Preview ${index}`}
+                className="adminproductform-image-thumb"
+              />
+              <button
+                type="button"
+                className="adminproductform-image-remove"
+                onClick={() => removeImage(index)}
+              >
+                ×
+              </button>
             </div>
           ))}
         </div>
 
+        {/* Specifications */}
         <div className="adminproductform-specifications">
           <h3>Specifications</h3>
           {formData.specifications.map((spec, index) => (
             <div key={index} className="adminproductform-spec-row">
-              <input type="text" placeholder="Key" value={spec.key} onChange={(e) => updateSpecification(index, "key", e.target.value)} className="adminproductform-spec-input" />
-              <input type="text" placeholder="Value" value={spec.value} onChange={(e) => updateSpecification(index, "value", e.target.value)} className="adminproductform-spec-input" />
-              <button type="button" className="adminproductform-spec-remove" onClick={() => removeSpecification(index)}>Remove</button>
+              <input
+                type="text"
+                placeholder="Key"
+                value={spec.key}
+                onChange={(e) => updateSpecification(index, "key", e.target.value)}
+                className="adminproductform-spec-input"
+              />
+              <input
+                type="text"
+                placeholder="Value"
+                value={spec.value}
+                onChange={(e) => updateSpecification(index, "value", e.target.value)}
+                className="adminproductform-spec-input"
+              />
+              <button
+                type="button"
+                className="adminproductform-spec-remove"
+                onClick={() => removeSpecification(index)}
+              >
+                Remove
+              </button>
             </div>
           ))}
-          <button type="button" className="adminproductform-spec-add" onClick={addSpecification}>Add Specification</button>
+          <button
+            type="button"
+            className="adminproductform-spec-add"
+            onClick={addSpecification}
+          >
+            Add Specification
+          </button>
         </div>
 
         <button type="submit" className="adminproductform-submit" disabled={loading}>
@@ -273,6 +390,7 @@ export default function AdminProductForm() {
         </button>
       </form>
 
+      {/* Product list */}
       <div className="adminproductform-products">
         <h2>All Products</h2>
         <div className="adminproductform-product-grid">
@@ -280,7 +398,12 @@ export default function AdminProductForm() {
             <div key={product.id} className="adminproductform-card">
               <div className="adminproductform-card-images">
                 {product.product_images.map((img, idx) => (
-                  <img key={idx} src={img.image_url} alt={product.name} className="adminproductform-card-image" />
+                  <img
+                    key={idx}
+                    src={img.image_url}
+                    alt={product.name}
+                    className="adminproductform-card-image"
+                  />
                 ))}
               </div>
               <div className="adminproductform-card-content">
@@ -288,11 +411,38 @@ export default function AdminProductForm() {
                 <p className="adminproductform-card-price">₦{product.price}</p>
                 <p className="adminproductform-card-category">{product.category_id}</p>
                 <p className="adminproductform-card-location">{product.location}</p>
-                {product.free_delivery && <span className="adminproductform-card-badge">Free Delivery</span>}
+                {product.free_delivery && (
+                  <span className="adminproductform-card-badge">Free Delivery</span>
+                )}
                 <span className="adminproductform-card-condition">{product.condition}</span>
+
+                {/* Show description */}
+                <p className="adminproductform-card-description">{product.description}</p>
+
+                {/* Show specifications */}
+                {product.product_specifications.length > 0 && (
+                  <ul className="adminproductform-card-specs">
+                    {product.product_specifications.map((spec, idx) => (
+                      <li key={idx}>
+                        <strong>{spec.key}:</strong> {spec.value}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
                 <div className="adminproductform-card-actions">
-                  <button className="adminproductform-card-edit" onClick={() => handleEdit(product)}>Edit</button>
-                  <button className="adminproductform-card-delete" onClick={() => handleDelete(product.id)}>Delete</button>
+                  <button
+                    className="adminproductform-card-edit"
+                    onClick={() => handleEdit(product)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="adminproductform-card-delete"
+                    onClick={() => handleDelete(product.id)}
+                  >
+                    Delete
+                  </button>
                 </div>
               </div>
             </div>

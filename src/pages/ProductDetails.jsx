@@ -26,14 +26,12 @@ export default function ProductDetails() {
   const sliderRef = useRef(null);
   const imageSliderRef = useRef(null);
 
-  // Get product data from Supabase
   useEffect(() => {
     if (products.length > 0) {
       const foundProduct = products.find((p) => p.id === id);
       if (foundProduct) {
         setProduct(foundProduct);
 
-        // Get related products from same category
         const related = products
           .filter(
             (p) =>
@@ -45,7 +43,6 @@ export default function ProductDetails() {
     }
   }, [id, products]);
 
-  // Handle image scroll
   const handleImageScroll = () => {
     if (imageSliderRef.current) {
       const scrollLeft = imageSliderRef.current.scrollLeft;
@@ -55,7 +52,6 @@ export default function ProductDetails() {
     }
   };
 
-  // Auto-scroll image indicators
   useEffect(() => {
     const slider = imageSliderRef.current;
     if (slider) {
@@ -74,7 +70,6 @@ export default function ProductDetails() {
       }
       addToCart(product);
       setShowSuccessModal(true);
-      // Auto-close modal after 3 seconds
       setTimeout(() => setShowSuccessModal(false), 3000);
     }
   };
@@ -119,6 +114,7 @@ Please confirm availability.`;
     <div className="productdetails-page">
       <NavBar />
       <div className="productdetails-container">
+
         {/* Product Image Slider */}
         <div className="productdetails-image-section">
           <div className="productdetails-image-slider" ref={imageSliderRef}>
@@ -134,14 +130,12 @@ Please confirm availability.`;
             ))}
           </div>
 
-          {/* Free Delivery Badge on Image */}
           {product.free_delivery && (
             <div className="productdetails-image-badge">
               Free Delivery within Lagos
             </div>
           )}
 
-          {/* Image indicators */}
           {product.images.length > 1 && (
             <div className="productdetails-image-indicators">
               {product.images.map((_, index) => (
@@ -156,12 +150,11 @@ Please confirm availability.`;
           )}
         </div>
 
-        {/* Product Info Section */}
+        {/* Product Info */}
         <div className="productdetails-main">
-          {/* Title */}
+
           <h1 className="productdetails-title">{product.name}</h1>
 
-          {/* Price */}
           <div className="productdetails-price-section">
             <div className="productdetails-price">{product.price}</div>
             <p className="productdetails-price-note">
@@ -169,7 +162,6 @@ Please confirm availability.`;
             </p>
           </div>
 
-          {/* Badges */}
           <div className="productdetails-badges">
             <span className="productdetails-badge productdetails-badge-condition">
               {product.condition}
@@ -179,41 +171,41 @@ Please confirm availability.`;
             </span>
           </div>
 
-          {/* Location */}
           <div className="productdetails-location">
             <IoLocationOutline size={16} />
             <span>{product.location} – Nationwide Delivery</span>
           </div>
 
-          {/* Specifications */}
+          {/* Specifications (FIXED) */}
           <section className="productdetails-section">
             <h2 className="productdetails-section-title">Specifications</h2>
+
             <ul className="productdetails-specs-list">
-              {Object.entries(product.specifications || {}).map(
-                ([key, value]) => (
-                  <li key={key}>
-                    {key}: {value}
+              {product.product_specifications?.length > 0 ? (
+                product.product_specifications.map((spec, index) => (
+                  <li key={index}>
+                    {spe_key}: {spec_value}
                   </li>
-                ),
-              )}
-              {(!product.specifications ||
-                Object.keys(product.specifications).length === 0) && (
+                ))
+              ) : (
                 <li>No specifications available</li>
               )}
             </ul>
           </section>
 
-          {/* Product Description */}
+          {/* Description (FIXED) */}
           <section className="productdetails-section">
             <h2 className="productdetails-section-title">
               Product Description
             </h2>
+
             <p className="productdetails-description">
-              {product.description || "No description available for this product."}
+              {product.description?.trim() ||
+                "No description available for this product."}
             </p>
           </section>
 
-          {/* Delivery Information */}
+          {/* Delivery */}
           <section className="productdetails-section">
             <h2 className="productdetails-section-title">
               Delivery Information
@@ -225,7 +217,7 @@ Please confirm availability.`;
             </ul>
           </section>
 
-          {/* Trust Section */}
+          {/* Trust */}
           <section className="productdetails-section productdetails-trust-section">
             <h2 className="productdetails-section-title">Why Buy From</h2>
             <ul className="productdetails-trust-list">
@@ -236,7 +228,7 @@ Please confirm availability.`;
             </ul>
           </section>
 
-          {/* Related Products */}
+          {/* Related */}
           {relatedProducts.length > 0 && (
             <section className="productdetails-section">
               <h2 className="productdetails-section-title">
@@ -253,12 +245,10 @@ Please confirm availability.`;
             </section>
           )}
 
-          {/* Desktop CTA Buttons */}
           <div className="productdetails-desktop-cta">
             <button
               className="productdetails-desktop-cta-button productdetails-desktop-cta-basket"
               onClick={handleAddToBasket}
-              title="Add to Basket"
             >
               <CiShoppingBasket size={20} />
               <span>Add to Basket</span>
@@ -272,89 +262,6 @@ Please confirm availability.`;
             </button>
           </div>
         </div>
-      </div>
-
-      {/* Contact Modal */}
-      {showContactModal && (
-        <div
-          className="productdetails-modal-overlay"
-          onClick={() => setShowContactModal(false)}
-        >
-          <div
-            className="productdetails-modal"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              className="productdetails-modal-close"
-              onClick={() => setShowContactModal(false)}
-            >
-              <IoMdClose size={24} />
-            </button>
-
-            <h2 className="productdetails-modal-title">Contact to Order</h2>
-
-            <div className="productdetails-modal-buttons">
-              <button
-                className="productdetails-modal-button productdetails-modal-button-call"
-                onClick={handleCallSeller}
-              >
-                <FaPhone size={20} />
-                <span>Call Us</span>
-              </button>
-
-              <button
-                className="productdetails-modal-button productdetails-modal-button-whatsapp"
-                onClick={handleWhatsApp}
-              >
-                <FaWhatsapp size={20} />
-                <span>Chat on WhatsApp</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Success Modal */}
-      {showSuccessModal && (
-        <div className="productdetails-success-modal-overlay">
-          <div className="productdetails-success-modal">
-            <div className="productdetails-success-icon">
-              <MdCheckCircle size={60} />
-            </div>
-            <h2 className="productdetails-success-title">{successMessage}</h2>
-            <p className="productdetails-success-text">
-              {product.name}{" "}
-              {successMessage === "Added to Basket!"
-                ? "has been successfully added to your basket."
-                : "quantity updated in your basket."}
-            </p>
-            <button
-              className="productdetails-success-button"
-              onClick={() => setShowSuccessModal(false)}
-            >
-              Continue Shopping
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Sticky Mobile CTA Bar */}
-      <div className="productdetails-sticky-cta">
-        <button
-          className="productdetails-cta-button productdetails-cta-basket"
-          onClick={handleAddToBasket}
-          title="Add to Basket"
-        >
-          <CiShoppingBasket size={20} />
-          <span>Add to Basket</span>
-        </button>
-
-        <button
-          className="productdetails-cta-button productdetails-cta-contact"
-          onClick={handleContactClick}
-        >
-          Contact to Order
-        </button>
       </div>
 
       <Footer />

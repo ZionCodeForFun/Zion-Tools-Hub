@@ -16,31 +16,28 @@ export default function useProducts() {
           .from("products")
           .select(
             `
-            id,
-            name,
-            price,
-            location,
-            condition,
-            free_delivery,
-            created_at,
-            category_id,
-            categories (id, name, slug),
-            product_images (id, product_id, image_url),
-            product_specifications (*)
-          `,
+  id,
+  name,
+  price,
+  description,
+  location,
+  condition,
+  free_delivery,
+  created_at,
+  category_id,
+  categories (id, name, slug),
+  product_images (id, product_id, image_url),
+  product_specifications (*)
+`,
           )
           .order("created_at", { ascending: false });
 
         if (productsError) throw productsError;
-
-        // Format products to match UI expectations
         const formattedProducts = productsData.map((product) => {
-          // Transform specifications to object
           const specifications = {};
           product.product_specifications?.forEach((spec) => {
             specifications[spec.key] = spec.value;
           });
-
           return {
             id: product.id,
             name: product.name,
@@ -50,8 +47,16 @@ export default function useProducts() {
             free_delivery: product.free_delivery,
             created_at: product.created_at,
             category: product.categories?.slug || "",
+
+            // FIXES
+            description: product.description || "",
+
             images: product.product_images?.map((img) => img.image_url) || [],
+
             specifications: specifications,
+
+            // ADD THIS so ProductDetails can read it
+            product_specifications: product.product_specifications || [],
           };
         });
 
