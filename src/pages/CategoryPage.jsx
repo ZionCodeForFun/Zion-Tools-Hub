@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import Navbar from "../components/NavBar";
 import BackToHome from "../components/BackToHome";
@@ -22,13 +22,11 @@ export default function CategoryPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 6;
 
-  const sectionRef = useRef(null);
-
   const category = categories.find((c) => c.slug === slug);
 
   let filteredProducts = products.filter((p) => p.category === slug);
 
-  // Apply search filter on top of category filter
+  // Apply search filter
   if (searchQuery.trim()) {
     filteredProducts = filteredProducts.filter(
       (product) =>
@@ -37,12 +35,12 @@ export default function CategoryPage() {
     );
   }
 
-  // Reset to page 1 when category or search changes
+  // Reset page when category or search changes
   useEffect(() => {
     setCurrentPage(1);
   }, [slug, searchQuery]);
 
-  // Pagination logic
+  // Pagination
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
 
@@ -56,12 +54,11 @@ export default function CategoryPage() {
   const handlePageChange = (page) => {
     setCurrentPage(page);
 
-    if (sectionRef.current) {
-      sectionRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
+    // Scroll to top smoothly
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
   };
 
   if (loadingProducts || loadingCategories) {
@@ -74,67 +71,65 @@ export default function CategoryPage() {
       <BackToHome />
       <SearchBar />
 
-      <div ref={sectionRef}>
-        <Section
-          title={
-            searchQuery
-              ? `${category?.name || slug} - Search Results`
-              : category?.name || slug
-          }
-        >
-          {filteredProducts.length > 0 ? (
-            <>
-              <ProductGrid products={currentProducts} />
+      <Section
+        title={
+          searchQuery
+            ? `${category?.name || slug} - Search Results`
+            : category?.name || slug
+        }
+      >
+        {filteredProducts.length > 0 ? (
+          <>
+            <ProductGrid products={currentProducts} />
 
-              {totalPages > 1 && (
-                <div className="pagination">
+            {totalPages > 1 && (
+              <div className="pagination">
+                <button
+                  className="pagination-btn"
+                  disabled={currentPage === 1}
+                  onClick={() => handlePageChange(currentPage - 1)}
+                >
+                  Prev
+                </button>
+
+                {[...Array(totalPages)].map((_, index) => (
                   <button
-                    className="pagination-btn"
-                    disabled={currentPage === 1}
-                    onClick={() => handlePageChange(currentPage - 1)}
+                    key={index}
+                    className={`pagination-number ${
+                      currentPage === index + 1 ? "active" : ""
+                    }`}
+                    onClick={() => handlePageChange(index + 1)}
                   >
-                    Prev
+                    {index + 1}
                   </button>
+                ))}
 
-                  {[...Array(totalPages)].map((_, index) => (
-                    <button
-                      key={index}
-                      className={`pagination-number ${
-                        currentPage === index + 1 ? "active" : ""
-                      }`}
-                      onClick={() => handlePageChange(index + 1)}
-                    >
-                      {index + 1}
-                    </button>
-                  ))}
-
-                  <button
-                    className="pagination-btn"
-                    disabled={currentPage === totalPages}
-                    onClick={() => handlePageChange(currentPage + 1)}
-                  >
-                    Next
-                  </button>
-                </div>
-              )}
-            </>
-          ) : (
-            <EmptyState
-              messageTitle="No products found"
-              messageDescription="We couldn't find this tool right now."
-              whatsappMessage={
-                searchQuery
-                  ? `Hello, I'm looking for ${searchQuery} in the ${
-                      category?.name || slug
-                    } category but couldn't find any. Please can you help?`
-                  : `I'm looking for tools in the ${
-                      category?.name || slug
-                    } category but couldn't find any available.`
-              }
-            />
-          )}
-        </Section>
-      </div>
+                <button
+                  className="pagination-btn"
+                  disabled={currentPage === totalPages}
+                  onClick={() => handlePageChange(currentPage + 1)}
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </>
+        ) : (
+          <EmptyState
+            messageTitle="No products found"
+            messageDescription="We couldn't find this tool right now."
+            whatsappMessage={
+              searchQuery
+                ? `Hello, I'm looking for ${searchQuery} in the ${
+                    category?.name || slug
+                  } category but couldn't find any. Please can you help?`
+                : `I'm looking for tools in the ${
+                    category?.name || slug
+                  } category but couldn't find any available.`
+            }
+          />
+        )}
+      </Section>
 
       <Footer />
     </div>
