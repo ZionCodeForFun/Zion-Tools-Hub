@@ -2,9 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { IoLocationOutline } from "react-icons/io5";
 import { FaPhone, FaWhatsapp } from "react-icons/fa";
-import { IoMdClose } from "react-icons/io";
 import { CiShoppingBasket } from "react-icons/ci";
-import { MdCheckCircle } from "react-icons/md";
 import { useCart } from "../context/CartContext";
 import useProducts from "../data/ProductApi";
 import ProductCard from "../components/ProductCard";
@@ -19,12 +17,15 @@ export default function ProductDetails() {
   const { products, loadingProducts, errorProducts } = useProducts();
   const [product, setProduct] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [showContactModal, setShowContactModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [relatedProducts, setRelatedProducts] = useState([]);
-  const sliderRef = useRef(null);
   const imageSliderRef = useRef(null);
+  const relatedRef = useRef(null);
+
+  // Pagination state for related products
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 4;
 
   useEffect(() => {
     if (products.length > 0) {
@@ -35,14 +36,16 @@ export default function ProductDetails() {
         const related = products
           .filter(
             (p) =>
-              p.category === foundProduct.category && p.id !== foundProduct.id,
+              p.category === foundProduct.category && p.id !== foundProduct.id
           )
-          .slice(0, 8);
+          .slice(0, 100); // get all related, we'll paginate
         setRelatedProducts(related);
+        setCurrentPage(1); // reset page when product changes
       }
     }
   }, [id, products]);
 
+  // Image slider scroll logic
   const handleImageScroll = () => {
     if (imageSliderRef.current) {
       const scrollLeft = imageSliderRef.current.scrollLeft;
@@ -63,59 +66,36 @@ export default function ProductDetails() {
   const handleAddToBasket = () => {
     if (product) {
       const exists = cartItems.some((item) => item.id === product.id);
-      if (exists) {
-        setSuccessMessage("Quantity Increased!");
-      } else {
-        setSuccessMessage("Added to Basket!");
-      }
+      setSuccessMessage(exists ? "Quantity Increased!" : "Added to Basket!");
       addToCart(product);
       setShowSuccessModal(true);
       setTimeout(() => setShowSuccessModal(false), 3000);
     }
   };
 
-  const handleContactClick = () => {
-    setShowContactModal(true);
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    if (relatedRef.current) {
+      relatedRef.current.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
-  const handleCallSeller = () => {
-    window.location.href = "tel:+2347049685365";
-  };
+  if (loadingProducts) return <Spinner />;
+  if (errorProducts) return <div className="productdetails-error">{errorProducts}</div>;
+  if (!product) return <div className="productdetails-not-found">Product not found</div>;
 
-  const handleWhatsApp = () => {
-    const message = `Hello, I'm interested in this product from Zion Tools Hub.
-
-Product: ${product.name}
-Price: ${product.price}
-Quantity: 1
-Location: ${product.location}
-
-Product Link: ${window.location.href}
-
-Please confirm availability.`;
-
-    const encodedMessage = encodeURIComponent(message);
-    window.location.href = `https://wa.me/2347049685365?text=${encodedMessage}`;
-  };
-
-  if (loadingProducts) {
-    return <Spinner />;
-  }
-
-  if (errorProducts) {
-    return <div className="productdetails-error">Error: {errorProducts}</div>;
-  }
-
-  if (!product) {
-    return <div className="productdetails-not-found">Product not found</div>;
-  }
+  // Pagination calculation
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentRelated = relatedProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+  const totalPages = Math.ceil(relatedProducts.length / productsPerPage);
 
   return (
     <div className="productdetails-page">
       <NavBar />
-      <div className="productdetails-container">
 
-        {/* Product Image Slider */}
+      <div className="productdetails-container">
+        {/* Image Slider */}
         <div className="productdetails-image-section">
           <div className="productdetails-image-slider" ref={imageSliderRef}>
             {product.images.map((image, index) => (
@@ -129,13 +109,6 @@ Please confirm availability.`;
               </div>
             ))}
           </div>
-
-          {product.free_delivery && (
-            <div className="productdetails-image-badge">
-              Free Delivery within Lagos
-            </div>
-          )}
-
           {product.images.length > 1 && (
             <div className="productdetails-image-indicators">
               {product.images.map((_, index) => (
@@ -152,133 +125,82 @@ Please confirm availability.`;
 
         {/* Product Info */}
         <div className="productdetails-main">
-
           <h1 className="productdetails-title">{product.name}</h1>
+          <div className="productdetails-price">{product.price}</div>
 
-          <div className="productdetails-price-section">
-            <div className="productdetails-price">{product.price}</div>
-            <p className="productdetails-price-note">
-              Price may vary depending on stock availability
-            </p>
-          </div>
-
-          <div className="productdetails-badges">
-            <span className="productdetails-badge productdetails-badge-condition">
-              {product.condition}
-            </span>
-            <span className="productdetails-badge productdetails-badge-payment">
-              💳 Payment on Delivery
-            </span>
-          </div>
-
-          <div className="productdetails-location">
-            <IoLocationOutline size={16} />
-            <span>{product.location} – Nationwide Delivery</span>
-          </div>
-
-          {/* Specifications (FIXED) */}
+          {/* Specifications */}
           <section className="productdetails-section">
-            <h2 className="productdetails-section-title">Specifications</h2>
-
-            <ul className="productdetails-specs-list">
-              {product.product_specifications?.length > 0 ? (
-                product.product_specifications.map((spec, index) => (
-                  <li key={index}>
-     {spec.spec_key}: {spec.spec_value}
-                  </li>
-                ))
-              ) : (
-                <li>No specifications available</li>
-              )}
+            <h2>Specifications</h2>
+            <ul>
+              {product.product_specifications?.length
+                ? product.product_specifications.map((spec, idx) => (
+                    <li key={idx}>
+                      {spec.spec_key}: {spec.spec_value}
+                    </li>
+                  ))
+                : <li>No specifications available</li>}
             </ul>
           </section>
 
-          {/* Description (FIXED) */}
+          {/* Description */}
           <section className="productdetails-section">
-            <h2 className="productdetails-section-title">
-              Product Description
-            </h2>
-
-            <p className="productdetails-description">
-              {product.description?.trim() ||
-                "No description available for this product."}
-            </p>
+            <h2>Description</h2>
+            <p>{product.description || "No description available."}</p>
           </section>
 
-          {/* Delivery */}
-          <section className="productdetails-section">
-            <h2 className="productdetails-section-title">
-              Delivery Information
-            </h2>
-            <ul className="productdetails-delivery-list">
-              <li>Same-day delivery within Lagos</li>
-              <li>Nationwide delivery available</li>
-              <li>Store pickup available</li>
-            </ul>
-          </section>
-
-          {/* Trust */}
-          <section className="productdetails-section productdetails-trust-section">
-            <h2 className="productdetails-section-title">Why Buy From</h2>
-            <ul className="productdetails-trust-list">
-              <li>✔ Quality Tools</li>
-              <li>✔ Reliable Suppliers</li>
-              <li>✔ Nationwide Delivery</li>
-              <li>✔ Affordable Prices</li>
-            </ul>
-          </section>
-
-          {/* Related */}
+          {/* Related Products */}
           {relatedProducts.length > 0 && (
-            <section className="productdetails-section">
-              <h2 className="productdetails-section-title">
-                You May Also Like
-              </h2>
+            <section className="productdetails-section" ref={relatedRef}>
+              <h2>You May Also Like</h2>
               <div className="productdetails-related-grid">
-                {relatedProducts.map((relatedProduct) => (
-                  <ProductCard
-                    key={relatedProduct.id}
-                    product={relatedProduct}
-                  />
+                {currentRelated.map((relatedProduct) => (
+                  <ProductCard key={relatedProduct.id} product={relatedProduct} />
                 ))}
               </div>
+
+              {totalPages > 1 && (
+                <div className="pagination">
+                  <button
+                    className="pagination-btn"
+                    disabled={currentPage === 1}
+                    onClick={() => handlePageChange(currentPage - 1)}
+                  >
+                    Prev
+                  </button>
+
+                  {[...Array(totalPages)].map((_, index) => (
+                    <button
+                      key={index}
+                      className={`pagination-number ${
+                        currentPage === index + 1 ? "active" : ""
+                      }`}
+                      onClick={() => handlePageChange(index + 1)}
+                    >
+                      {index + 1}
+                    </button>
+                  ))}
+
+                  <button
+                    className="pagination-btn"
+                    disabled={currentPage === totalPages}
+                    onClick={() => handlePageChange(currentPage + 1)}
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
             </section>
           )}
 
+          {/* CTA */}
           <div className="productdetails-desktop-cta">
-            <button
-              className="productdetails-desktop-cta-button productdetails-desktop-cta-basket"
-              onClick={handleAddToBasket}
-            >
-              <CiShoppingBasket size={20} />
-              <span>Add to Basket</span>
-            </button>
-
-            <button
-              className="productdetails-desktop-cta-button productdetails-desktop-cta-contact"
-              onClick={handleContactClick}
-            >
-              Contact to Order
+            <button onClick={handleAddToBasket} className="productdetails-desktop-cta-basket">
+              <CiShoppingBasket size={20} /> Add to Basket
             </button>
           </div>
         </div>
       </div>
-<div className="productdetails-sticky-cta">
-  <button
-    className="productdetails-cta-button productdetails-cta-basket"
-    onClick={handleAddToBasket}
-  >
-    <CiShoppingBasket size={18} />
-    Add to Basket
-  </button>
 
-  <button
-    className="productdetails-cta-button productdetails-cta-contact"
-    onClick={handleContactClick}
-  >
-    Contact to Order
-  </button>
-</div>
       <Footer />
     </div>
   );
