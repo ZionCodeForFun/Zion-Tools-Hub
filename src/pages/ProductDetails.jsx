@@ -72,7 +72,11 @@ export default function ProductDetails() {
       setTimeout(() => setShowSuccessModal(false), 3000);
     }
   };
-
+const handleContactClick = () => {
+  const message = `Hello, I'm interested in the ${product.name}. Is it available?`;
+  const whatsappUrl = `https://wa.me/2347049685365?text=${encodeURIComponent(message)}`;
+  window.open(whatsappUrl, "_blank");
+};
   const handlePageChange = (page) => {
     setCurrentPage(page);
     if (relatedRef.current) {
