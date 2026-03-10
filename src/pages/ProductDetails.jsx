@@ -200,7 +200,22 @@ export default function ProductDetails() {
           </div>
         </div>
       </div>
+<div className="productdetails-sticky-cta">
+  <button
+    className="productdetails-cta-button productdetails-cta-basket"
+    onClick={handleAddToBasket}
+  >
+    <CiShoppingBasket size={18} />
+    Add to Basket
+  </button>
 
+  <button
+    className="productdetails-cta-button productdetails-cta-contact"
+    onClick={handleContactClick}
+  >
+    Contact to Order
+  </button>
+</div>
       <Footer />
     </div>
   );
