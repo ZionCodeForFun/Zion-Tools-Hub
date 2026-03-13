@@ -56,7 +56,7 @@ export default function Footer() {
             <div className="footer-contact-item">
               <IoLocation size={18} />
               <span>
-                Mandalas (Lagos Island)
+                Agarawu (Lagos Island)
                 <br />
                 Lagos, Nigeria
               </span>
@@ -98,7 +98,7 @@ export default function Footer() {
                 <BsTwitterX size={24} />
               </a>
               <a
-                href="https://tiktok.com/@ziontoolshub"
+                href="https://tiktok.com/ziontoolshub"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="footer-social-link"
