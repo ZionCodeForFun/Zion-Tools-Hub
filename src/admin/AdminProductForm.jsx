@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { supabase } from "../lib/supabaseClient";
 import "../adminStyles/AdminProductForm.css";
 
@@ -20,7 +20,9 @@ export default function AdminProductForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [editingId, setEditingId] = useState(null);
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 6;
+  const gridRef = useRef(null);
   useEffect(() => {
     fetchCategories();
     fetchProducts();
@@ -35,9 +37,7 @@ export default function AdminProductForm() {
 
   // Fetch products with images and specifications
   const fetchProducts = async () => {
-    const { data, error } = await supabase
-      .from("products")
-      .select(`
+    const { data, error } = await supabase.from("products").select(`
         *,
         product_images (*),
         product_specifications (*)
@@ -80,7 +80,7 @@ export default function AdminProductForm() {
 
   const updateSpecification = (index, field, value) => {
     const newSpecs = formData.specifications.map((spec, i) =>
-      i === index ? { ...spec, [field]: value } : spec
+      i === index ? { ...spec, [field]: value } : spec,
     );
     setFormData({ ...formData, specifications: newSpecs });
   };
@@ -121,7 +121,7 @@ export default function AdminProductForm() {
         formData.images.map(async (img) => {
           if (typeof img === "string") return img;
           return await uploadImage(img);
-        })
+        }),
       );
 
       const slug =
@@ -152,7 +152,10 @@ export default function AdminProductForm() {
         productId = editingId;
 
         // Delete old images & specs
-        await supabase.from("product_images").delete().eq("product_id", editingId);
+        await supabase
+          .from("product_images")
+          .delete()
+          .eq("product_id", editingId);
         await supabase
           .from("product_specifications")
           .delete()
@@ -211,7 +214,19 @@ export default function AdminProductForm() {
       setLoading(false);
     }
   };
-
+  const indexOfLast = currentPage * productsPerPage;
+  const indexOfFirst = indexOfLast - productsPerPage;
+  const currentProducts = products.slice(indexOfFirst, indexOfLast);
+  const totalPages = Math.ceil(products.length / productsPerPage);
+  useEffect(() => {
+    gridRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }, [currentPage]);
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [products]);
   // Edit product
   const handleEdit = (product) => {
     setFormData({
@@ -333,7 +348,9 @@ export default function AdminProductForm() {
           {formData.images.map((image, index) => (
             <div key={index} className="adminproductform-image-item">
               <img
-                src={typeof image === "string" ? image : URL.createObjectURL(image)}
+                src={
+                  typeof image === "string" ? image : URL.createObjectURL(image)
+                }
                 alt={`Preview ${index}`}
                 className="adminproductform-image-thumb"
               />
@@ -357,14 +374,18 @@ export default function AdminProductForm() {
                 type="text"
                 placeholder="Key"
                 value={spec.key}
-                onChange={(e) => updateSpecification(index, "key", e.target.value)}
+                onChange={(e) =>
+                  updateSpecification(index, "key", e.target.value)
+                }
                 className="adminproductform-spec-input"
               />
               <input
                 type="text"
                 placeholder="Value"
                 value={spec.value}
-                onChange={(e) => updateSpecification(index, "value", e.target.value)}
+                onChange={(e) =>
+                  updateSpecification(index, "value", e.target.value)
+                }
                 className="adminproductform-spec-input"
               />
               <button
@@ -385,7 +406,11 @@ export default function AdminProductForm() {
           </button>
         </div>
 
-        <button type="submit" className="adminproductform-submit" disabled={loading}>
+        <button
+          type="submit"
+          className="adminproductform-submit"
+          disabled={loading}
+        >
           {loading ? "Saving..." : editingId ? "Update Product" : "Add Product"}
         </button>
       </form>
@@ -393,8 +418,8 @@ export default function AdminProductForm() {
       {/* Product list */}
       <div className="adminproductform-products">
         <h2>All Products</h2>
-        <div className="adminproductform-product-grid">
-          {products.map((product) => (
+        <div className="adminproductform-product-grid" ref={gridRef}>
+          {currentProducts.map((product) => (
             <div key={product.id} className="adminproductform-card">
               <div className="adminproductform-card-images">
                 {product.product_images.map((img, idx) => (
@@ -409,17 +434,27 @@ export default function AdminProductForm() {
               <div className="adminproductform-card-content">
                 <h3 className="adminproductform-card-title">{product.name}</h3>
                 <p className="adminproductform-card-price">₦{product.price}</p>
-                <p className="adminproductform-card-category">{product.category_id}</p>
-                <p className="adminproductform-card-location">{product.location}</p>
+                <p className="adminproductform-card-category">
+                  {product.category_id}
+                </p>
+                <p className="adminproductform-card-location">
+                  {product.location}
+                </p>
+
                 {product.free_delivery && (
-                  <span className="adminproductform-card-badge">Free Delivery</span>
+                  <span className="adminproductform-card-badge">
+                    Free Delivery
+                  </span>
                 )}
-                <span className="adminproductform-card-condition">{product.condition}</span>
 
-                {/* Show description */}
-                <p className="adminproductform-card-description">{product.description}</p>
+                <span className="adminproductform-card-condition">
+                  {product.condition}
+                </span>
 
-                {/* Show specifications */}
+                <p className="adminproductform-card-description">
+                  {product.description}
+                </p>
+
                 {product.product_specifications.length > 0 && (
                   <ul className="adminproductform-card-specs">
                     {product.product_specifications.map((spec, idx) => (
@@ -429,25 +464,56 @@ export default function AdminProductForm() {
                     ))}
                   </ul>
                 )}
+              </div>
 
-                <div className="adminproductform-card-actions">
-                  <button
-                    className="adminproductform-card-edit"
-                    onClick={() => handleEdit(product)}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    className="adminproductform-card-delete"
-                    onClick={() => handleDelete(product.id)}
-                  >
-                    Delete
-                  </button>
-                </div>
+              <div className="adminproductform-card-actions">
+                <button
+                  className="adminproductform-card-edit"
+                  onClick={() => handleEdit(product)}
+                >
+                  Edit
+                </button>
+                <button
+                  className="adminproductform-card-delete"
+                  onClick={() => handleDelete(product.id)}
+                >
+                  Delete
+                </button>
               </div>
             </div>
           ))}
         </div>
+        {totalPages > 1 && (
+          <div className="admin-pagination">
+            <button
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((p) => p - 1)}
+              className="admin-pagination-btn"
+            >
+              Prev
+            </button>
+
+            {[...Array(totalPages)].map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setCurrentPage(i + 1)}
+                className={`admin-pagination-number ${
+                  currentPage === i + 1 ? "active" : ""
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage((p) => p + 1)}
+              className="admin-pagination-btn"
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

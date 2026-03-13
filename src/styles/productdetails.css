@@ -583,7 +583,6 @@
   transform: scale(0.98);
 }
 
-/* Tablet and Desktop Styles */
 @media (min-width: 768px) {
   .productdetails-container {
     padding-bottom: 40px;
@@ -647,17 +646,14 @@
     gap: 16px;
   }
 
-  /* Show desktop CTA buttons */
   .productdetails-desktop-cta {
     display: flex;
   }
 
-  /* Hide mobile sticky CTA on desktop */
   .productdetails-sticky-cta {
     display: none;
   }
 
-  /* Modal positioned better on desktop */
   .productdetails-modal-overlay {
     align-items: center;
     justify-content: center;

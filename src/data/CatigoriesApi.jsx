@@ -12,8 +12,8 @@ export default function useCategories() {
       try {
         const { data, error } = await supabase
           .from("categories")
-          .select("id, name, slug, icon")
-          .order("name", { ascending: true });
+          .select("id, name, slug, icon, display_order")
+          .order("display_order", { ascending: true });
 
         if (error) throw error;
 
@@ -23,6 +23,7 @@ export default function useCategories() {
             name: cat.name,
             slug: cat.slug,
             icon: cat.icon || "📦",
+          
           })),
         );
       } catch (err) {

@@ -36,7 +36,7 @@ export default function ProductDetails() {
         const related = products
           .filter(
             (p) =>
-              p.category === foundProduct.category && p.id !== foundProduct.id
+              p.category === foundProduct.category && p.id !== foundProduct.id,
           )
           .slice(0, 100); // get all related, we'll paginate
         setRelatedProducts(related);
@@ -72,26 +72,38 @@ export default function ProductDetails() {
       setTimeout(() => setShowSuccessModal(false), 3000);
     }
   };
-const handleContactClick = () => {
-  const message = `Hello, I'm interested in the ${product.name}. Is it available?`;
-  const whatsappUrl = `https://wa.me/2347049685365?text=${encodeURIComponent(message)}`;
-  window.open(whatsappUrl, "_blank");
-};
+  const handleContactClick = () => {
+    const message = `Hello, I'm interested in the ${product.name}. Is it available?`;
+    const whatsappUrl = `https://wa.me/2347049685365?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, "_blank");
+  };
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    if (relatedRef.current) {
-      relatedRef.current.scrollIntoView({ behavior: "smooth" });
-    }
   };
+  useEffect(() => {
+    if (relatedRef.current) {
+      setTimeout(() => {
+        relatedRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 100);
+    }
+  }, [currentPage]);
 
   if (loadingProducts) return <Spinner />;
-  if (errorProducts) return <div className="productdetails-error">{errorProducts}</div>;
-  if (!product) return <div className="productdetails-not-found">Product not found</div>;
+  if (errorProducts)
+    return <div className="productdetails-error">{errorProducts}</div>;
+  if (!product)
+    return <div className="productdetails-not-found">Product not found</div>;
 
   // Pagination calculation
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentRelated = relatedProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+  const currentRelated = relatedProducts.slice(
+    indexOfFirstProduct,
+    indexOfLastProduct,
+  );
   const totalPages = Math.ceil(relatedProducts.length / productsPerPage);
 
   return (
@@ -136,13 +148,15 @@ const handleContactClick = () => {
           <section className="productdetails-section">
             <h2>Specifications</h2>
             <ul>
-              {product.product_specifications?.length
-                ? product.product_specifications.map((spec, idx) => (
-                    <li key={idx}>
-                      {spec.spec_key}: {spec.spec_value}
-                    </li>
-                  ))
-                : <li>No specifications available</li>}
+              {product.product_specifications?.length ? (
+                product.product_specifications.map((spec, idx) => (
+                  <li key={idx}>
+                    {spec.spec_key}: {spec.spec_value}
+                  </li>
+                ))
+              ) : (
+                <li>No specifications available</li>
+              )}
             </ul>
           </section>
 
@@ -158,7 +172,10 @@ const handleContactClick = () => {
               <h2>You May Also Like</h2>
               <div className="productdetails-related-grid">
                 {currentRelated.map((relatedProduct) => (
-                  <ProductCard key={relatedProduct.id} product={relatedProduct} />
+                  <ProductCard
+                    key={relatedProduct.id}
+                    product={relatedProduct}
+                  />
                 ))}
               </div>
 
@@ -196,30 +213,40 @@ const handleContactClick = () => {
             </section>
           )}
 
-          {/* CTA */}
           <div className="productdetails-desktop-cta">
-            <button onClick={handleAddToBasket} className="productdetails-desktop-cta-basket">
-              <CiShoppingBasket size={20} /> Add to Basket
+            <button
+              onClick={handleAddToBasket}
+              className="productdetails-desktop-cta-button productdetails-desktop-cta-basket"
+            >
+              <CiShoppingBasket size={20} />
+              Add to Basket
+            </button>
+
+            <button
+              onClick={handleContactClick}
+              className="productdetails-desktop-cta-button productdetails-desktop-cta-contact"
+            >
+              Contact to Order
             </button>
           </div>
         </div>
       </div>
-<div className="productdetails-sticky-cta">
-  <button
-    className="productdetails-cta-button productdetails-cta-basket"
-    onClick={handleAddToBasket}
-  >
-    <CiShoppingBasket size={18} />
-    Add to Basket
-  </button>
+      <div className="productdetails-sticky-cta">
+        <button
+          className="productdetails-cta-button productdetails-cta-basket"
+          onClick={handleAddToBasket}
+        >
+          <CiShoppingBasket size={18} />
+          Add to Basket
+        </button>
 
-  <button
-    className="productdetails-cta-button productdetails-cta-contact"
-    onClick={handleContactClick}
-  >
-    Contact to Order
-  </button>
-</div>
+        <button
+          className="productdetails-cta-button productdetails-cta-contact"
+          onClick={handleContactClick}
+        >
+          Contact to Order
+        </button>
+      </div>
       <Footer />
     </div>
   );

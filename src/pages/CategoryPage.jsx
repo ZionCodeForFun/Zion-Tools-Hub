@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import Navbar from "../components/NavBar";
 import BackToHome from "../components/BackToHome";
@@ -18,7 +18,7 @@ export default function CategoryPage() {
   const { searchQuery } = useSearch();
   const { products, loadingProducts } = useProducts();
   const { categories, loadingCategories } = useCategories();
-
+  const gridRef = useRef(null);
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 6;
 
@@ -31,7 +31,7 @@ export default function CategoryPage() {
     filteredProducts = filteredProducts.filter(
       (product) =>
         product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.location.toLowerCase().includes(searchQuery.toLowerCase())
+        product.location.toLowerCase().includes(searchQuery.toLowerCase()),
     );
   }
 
@@ -46,23 +46,21 @@ export default function CategoryPage() {
 
   const currentProducts = filteredProducts.slice(
     indexOfFirstProduct,
-    indexOfLastProduct
+    indexOfLastProduct,
   );
 
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
+const handlePageChange = (page) => {
+  setCurrentPage(page);
 
-    // Scroll to product grid smoothly
-    const productGrid = document.querySelector(".product-grid");
-    if (productGrid) {
-      productGrid.scrollIntoView({ behavior: "smooth", block: "start" });
-    } else {
-      // fallback to top
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  };
+  setTimeout(() => {
+    gridRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }, 100);
+};
 
   if (loadingProducts || loadingCategories) {
     return <Spinner />;
@@ -83,7 +81,9 @@ export default function CategoryPage() {
       >
         {filteredProducts.length > 0 ? (
           <>
-            <ProductGrid products={currentProducts} />
+            <div ref={gridRef}>
+              <ProductGrid products={currentProducts} />
+            </div>
 
             {totalPages > 1 && (
               <div className="pagination">
