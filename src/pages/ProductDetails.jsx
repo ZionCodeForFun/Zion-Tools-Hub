@@ -29,7 +29,6 @@ export default function ProductDetails() {
   const imageSliderRef = useRef(null);
   const relatedRef = useRef(null);
   const navigate = useNavigate();
-  // Pagination state for related products
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 4;
 
@@ -44,30 +43,36 @@ export default function ProductDetails() {
             (p) =>
               p.category === foundProduct.category && p.id !== foundProduct.id,
           )
-          .slice(0, 100); // get all related, we'll paginate
+          .slice(0, 100);
         setRelatedProducts(related);
-        setCurrentPage(1); // reset page when product changes
+        setCurrentPage(1);
       }
     }
   }, [id, products]);
 
-  // Image slider scroll logic
-  const handleImageScroll = () => {
-    if (imageSliderRef.current) {
-      const scrollLeft = imageSliderRef.current.scrollLeft;
-      const imageWidth = imageSliderRef.current.clientWidth;
-      const newIndex = Math.round(scrollLeft / imageWidth);
-      setCurrentImageIndex(newIndex);
-    }
+  const handleDotClick = (index) => {
+    if (!imageSliderRef.current) return;
+    const slideWidth = imageSliderRef.current.offsetWidth;
+    imageSliderRef.current.scrollTo({
+      left: slideWidth * index,
+      behavior: "smooth",
+    });
+    setCurrentImageIndex(index);
   };
 
   useEffect(() => {
     const slider = imageSliderRef.current;
-    if (slider) {
-      slider.addEventListener("scroll", handleImageScroll);
-      return () => slider.removeEventListener("scroll", handleImageScroll);
-    }
-  }, []);
+    if (!slider) return;
+
+    const onScroll = () => {
+      const slideWidth = slider.offsetWidth;
+      const index = Math.round(slider.scrollLeft / slideWidth);
+      setCurrentImageIndex(index);
+    };
+
+    slider.addEventListener("scroll", onScroll);
+    return () => slider.removeEventListener("scroll", onScroll);
+  }, [product]);
 
   const handleAddToBasket = () => {
     if (!product) return;
@@ -80,7 +85,6 @@ export default function ProductDetails() {
 
     setShowSuccessModal(true);
 
-    // clear previous timer
     if (timerRef.current) {
       clearTimeout(timerRef.current);
     }
@@ -129,7 +133,6 @@ Please confirm availability.`;
   if (!product)
     return <div className="productdetails-not-found">Product not found</div>;
 
-  // Pagination calculation
   const indexOfLastProduct = currentPage * productsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
   const currentRelated = relatedProducts.slice(
@@ -141,9 +144,8 @@ Please confirm availability.`;
   return (
     <div className="productdetails-page">
       <NavBar />
-       <BackToHome />
+      <BackToHome />
       <div className="productdetails-container">
-        {/* Image Slider */}
         <div className="productdetails-image-section">
           <div className="productdetails-image-slider" ref={imageSliderRef}>
             {product.images.map((image, index) => (
@@ -165,6 +167,7 @@ Please confirm availability.`;
                   className={`productdetails-indicator-dot ${
                     index === currentImageIndex ? "active" : ""
                   }`}
+                  onClick={() => handleDotClick(index)}
                 />
               ))}
             </div>
@@ -294,23 +297,11 @@ Please confirm availability.`;
             <p>{product.name} has been added to your basket.</p>
 
             <div className="productdetails-success-actions">
-              <button
-                className="home"
-                onClick={() => 
-           
-                  navigate("/")
-                }
-              >
+              <button className="home" onClick={() => navigate("/")}>
                 Go to Homepage
               </button>
 
-              <button
-                className="checkout"
-                onClick={() => 
-              
-                  navigate("/cart")
-                }
-              >
+              <button className="checkout" onClick={() => navigate("/cart")}>
                 Complete Order
               </button>
             </div>
