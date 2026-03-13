@@ -4,6 +4,7 @@ import { useCart } from "../context/CartContext";
 import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
 import "../styles/cartpage.css";
+import BackToHome from "../components/BackToHome";
 
 export default function CartPage() {
   const { cartItems, updateQuantity, clearCart, getCartTotal } = useCart();
@@ -74,6 +75,7 @@ Please confirm availability.`;
   return (
     <div className="cartpage-page">
       <NavBar />
+      <BackToHome />
       <div className="cartpage-container">
         <h1 className="cartpage-title">Your Cart</h1>
 
@@ -85,7 +87,6 @@ Please confirm availability.`;
           <>
             <div className="cartpage-items">
               {cartItems.map((item) => {
-                // Handle both string prices (e.g., "₦1,234") and numeric prices
                 const priceString =
                   typeof item.price === "string"
                     ? item.price.replace(/[^0-9]/g, "")

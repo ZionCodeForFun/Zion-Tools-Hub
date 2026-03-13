@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { IoLocationOutline } from "react-icons/io5";
 import { FaPhone, FaWhatsapp } from "react-icons/fa";
 import { CiShoppingBasket } from "react-icons/ci";
@@ -10,6 +10,8 @@ import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
 import Spinner from "../components/Spinner";
 import "../styles/productdetails.css";
+import { IoMdClose } from "react-icons/io";
+import BackToHome from "../components/BackToHome";
 
 export default function ProductDetails() {
   const { id } = useParams();
@@ -20,9 +22,13 @@ export default function ProductDetails() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [relatedProducts, setRelatedProducts] = useState([]);
+  const [showContactModal, setShowContactModal] = useState(false);
+
+  const timerRef = useRef(null);
+
   const imageSliderRef = useRef(null);
   const relatedRef = useRef(null);
-
+  const navigate = useNavigate();
   // Pagination state for related products
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 4;
@@ -64,19 +70,45 @@ export default function ProductDetails() {
   }, []);
 
   const handleAddToBasket = () => {
-    if (product) {
-      const exists = cartItems.some((item) => item.id === product.id);
-      setSuccessMessage(exists ? "Quantity Increased!" : "Added to Basket!");
-      addToCart(product);
-      setShowSuccessModal(true);
-      setTimeout(() => setShowSuccessModal(false), 3000);
+    if (!product) return;
+
+    const exists = cartItems.some((item) => item.id === product.id);
+
+    setSuccessMessage(exists ? "Quantity Increased!" : "Added to Basket!");
+
+    addToCart(product);
+
+    setShowSuccessModal(true);
+
+    // clear previous timer
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
     }
   };
   const handleContactClick = () => {
-    const message = `Hello, I'm interested in the ${product.name}. Is it available?`;
-    const whatsappUrl = `https://wa.me/2347049685365?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, "_blank");
+    setShowContactModal(true);
   };
+
+  const handleCallSeller = () => {
+    window.location.href = "tel:+2347049685365";
+  };
+
+  const handleWhatsApp = () => {
+    const message = `Hello, I'm interested in this product.
+
+Product: ${product.name}
+Price: ${product.price}
+
+Product Link: ${window.location.href}
+
+Please confirm availability.`;
+
+    window.open(
+      `https://wa.me/2347049685365?text=${encodeURIComponent(message)}`,
+      "_blank",
+    );
+  };
+
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
@@ -109,7 +141,7 @@ export default function ProductDetails() {
   return (
     <div className="productdetails-page">
       <NavBar />
-
+       <BackToHome />
       <div className="productdetails-container">
         {/* Image Slider */}
         <div className="productdetails-image-section">
@@ -247,6 +279,82 @@ export default function ProductDetails() {
           Contact to Order
         </button>
       </div>
+      {showSuccessModal && (
+        <div className="productdetails-success-modal-overlay">
+          <div className="productdetails-success-modal">
+            <button
+              className="productdetails-success-close"
+              onClick={() => setShowSuccessModal(false)}
+            >
+              <IoMdClose size={22} />
+            </button>
+
+            <h2>{successMessage}</h2>
+
+            <p>{product.name} has been added to your basket.</p>
+
+            <div className="productdetails-success-actions">
+              <button
+                className="home"
+                onClick={() => 
+           
+                  navigate("/")
+                }
+              >
+                Go to Homepage
+              </button>
+
+              <button
+                className="checkout"
+                onClick={() => 
+              
+                  navigate("/cart")
+                }
+              >
+                Complete Order
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showContactModal && (
+        <div
+          className="productdetails-modal-overlay"
+          onClick={() => setShowContactModal(false)}
+        >
+          <div
+            className="productdetails-modal"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="productdetails-modal-close"
+              onClick={() => setShowContactModal(false)}
+            >
+              <IoMdClose size={24} />
+            </button>
+
+            <h2 className="productdetails-modal-title">Contact to Order</h2>
+
+            <div className="productdetails-modal-buttons">
+              <button
+                className="productdetails-modal-button call"
+                onClick={handleCallSeller}
+              >
+                <FaPhone /> Call Us
+              </button>
+
+              <button
+                className="productdetails-modal-button whatsapp"
+                onClick={handleWhatsApp}
+              >
+                <FaWhatsapp /> WhatsApp
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <Footer />
     </div>
   );
