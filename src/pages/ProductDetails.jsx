@@ -179,14 +179,13 @@ Please confirm availability.`;
           <h1 className="productdetails-title">{product.name}</h1>
           <div className="productdetails-price">{product.price}</div>
 
-          {/* Specifications */}
           <section className="productdetails-section">
             <h2>Specifications</h2>
             <ul>
               {product.product_specifications?.length ? (
                 product.product_specifications.map((spec, idx) => (
                   <li key={idx}>
-                    {spec.spec_key}: {spec.spec_value}
+                    {spec.spec_name}: {spec.spec_value}
                   </li>
                 ))
               ) : (

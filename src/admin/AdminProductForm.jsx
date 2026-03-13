@@ -141,7 +141,6 @@ export default function AdminProductForm() {
       let productId;
 
       if (editingId) {
-        // Update product
         const { data, error } = await supabase
           .from("products")
           .update(productData)
@@ -151,7 +150,6 @@ export default function AdminProductForm() {
         if (error) throw error;
         productId = editingId;
 
-        // Delete old images & specs
         await supabase
           .from("product_images")
           .delete()
@@ -161,7 +159,6 @@ export default function AdminProductForm() {
           .delete()
           .eq("product_id", editingId);
       } else {
-        // Insert new product
         const { data, error } = await supabase
           .from("products")
           .insert(productData)
@@ -170,7 +167,6 @@ export default function AdminProductForm() {
         productId = data[0].id;
       }
 
-      // Insert images
       const imageInserts = imageUrls.map((url) => ({
         product_id: productId,
         image_url: url,
@@ -180,20 +176,18 @@ export default function AdminProductForm() {
         .insert(imageInserts);
       if (imageError) throw imageError;
 
-      // Insert specifications
       const specInserts = formData.specifications
         .filter((spec) => spec.key && spec.value)
         .map((spec) => ({
           product_id: productId,
-          key: spec.key,
-          value: spec.value,
+          spec_name: spec.key,
+          spec_value: spec.value,
         }));
       const { error: specError } = await supabase
         .from("product_specifications")
         .insert(specInserts);
       if (specError) throw specError;
 
-      // Reset form
       setFormData({
         name: "",
         price: "",
@@ -239,8 +233,8 @@ export default function AdminProductForm() {
       free_delivery: product.free_delivery,
       images: product.product_images.map((img) => img.image_url),
       specifications: product.product_specifications.map((spec) => ({
-        key: spec.key,
-        value: spec.value,
+        key: spec.spec_name,
+        value: spec.spec_value,
       })),
     });
     setEditingId(product.id);
