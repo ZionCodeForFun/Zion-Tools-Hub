@@ -11,8 +11,8 @@ import {
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "../../styles/HomeHeroVideoSlider.css";
-import angleGrinderVideo from "../../assets/video/Anglegrinder.mp4";
-import concreteVibratorVideo from "../../assets/video/Concretevibrator.mp4";
+import angleGrinderVideo from "../../assets/video/Anglegrinder-web.mp4";
+import concreteVibratorVideo from "../../assets/video/Concretevibrator-web.mp4";
 import { useNavigate } from "react-router-dom";
 const HomeHeroVideoSlider = () => {
   const sliderRef = useRef(null);
@@ -69,7 +69,7 @@ const HomeHeroVideoSlider = () => {
     slidesToShow: 1,
     slidesToScroll: 1,
     autoplay: true,
-    autoplaySpeed: 5000,
+    autoplaySpeed: 5002,
     pauseOnHover: true,
     swipe: true,
     swipeToSlide: true,
