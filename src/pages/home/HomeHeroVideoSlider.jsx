@@ -4,8 +4,7 @@ import { ChevronLeft, ChevronRight, Truck, Shield, Award, MessageCircle } from '
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import '../../styles/HomeHeroVideoSlider.css'
-import angleGrinderVideo from '../../assets/Anglegrinder.mp4';
-import concreteVibratorVideo from '../../assets/Concretevibrator.mp4';
+
 import { useNavigate } from 'react-router-dom';
 const HomeHeroVideoSlider = () => {
   const sliderRef = useRef(null);
@@ -20,7 +19,7 @@ const HomeHeroVideoSlider = () => {
       subtitle: 'No Cables • High Performance • Built for Tough Jobs',
       ctaText: 'Shop Now',
        slug: 'power-equipment',
-      videoSrc: angleGrinderVideo,
+      videoSrc: '/public/video/Anglegrinder.mp4',
     },
     {
       id: 2,
@@ -28,7 +27,7 @@ const HomeHeroVideoSlider = () => {
       subtitle: 'Stronger Compaction • Smooth Concrete Finish • Site Ready',
       ctaText: 'Shop Now',
         slug: 'generators-machinery',
-      videoSrc: concreteVibratorVideo,
+      videoSrc: '/public/video/Concretevibrator.mp4',
     },
   ];
 
