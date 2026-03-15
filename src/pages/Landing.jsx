@@ -13,6 +13,7 @@ import Spinner from "../components/Spinner";
 import useProducts from "../data/ProductApi";
 import { useSearch } from "../context/SearchContext";
 import "../styles/landing.css";
+import HomeHeroVideoSlider from "./home/HomeHeroVideoSlider";
 
 const Landing = () => {
   const { searchQuery } = useSearch();
@@ -57,7 +58,7 @@ const Landing = () => {
       <Navbar />
       <BackToHome />
       <SearchBar />
-      {!searchQuery && <Hero />}
+      {!searchQuery && <HomeHeroVideoSlider />}
 
       {!searchQuery && (
         <Section title="Browse Categories">
