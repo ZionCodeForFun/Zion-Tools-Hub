@@ -19,7 +19,7 @@ const HomeHeroVideoSlider = () => {
       subtitle: 'No Cables • High Performance • Built for Tough Jobs',
       ctaText: 'Shop Now',
        slug: 'power-equipment',
-      videoSrc: '/public/video/Anglegrinder.mp4',
+      videoSrc: '/video/Anglegrinder.mp4',
     },
     {
       id: 2,
@@ -27,7 +27,7 @@ const HomeHeroVideoSlider = () => {
       subtitle: 'Stronger Compaction • Smooth Concrete Finish • Site Ready',
       ctaText: 'Shop Now',
         slug: 'generators-machinery',
-      videoSrc: '/public/video/Concretevibrator.mp4',
+      videoSrc: '/video/Concretevibrator.mp4',
     },
   ];
 
