@@ -1,12 +1,21 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { IoLocationOutline } from "react-icons/io5";
+import { IoMdClose } from "react-icons/io";
+import { ShoppingCart } from "lucide-react";
+import { useCart } from "../context/CartContext";
 import "../styles/productCard.css";
 
 export default function ProductCard({ product }) {
   const sliderRef = useRef(null);
+  const timerRef = useRef(null);
   const navigate = useNavigate();
+
+  const { addToCart, cartItems } = useCart();
+
   const [showRightIndicator, setShowRightIndicator] = useState(true);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const handleScroll = () => {
     if (sliderRef.current) {
@@ -14,6 +23,26 @@ export default function ProductCard({ product }) {
       const isAtEnd = scrollLeft + clientWidth >= scrollWidth - 10;
       setShowRightIndicator(!isAtEnd);
     }
+  };
+
+  const handleAddToCart = (e) => {
+    e.stopPropagation();
+
+    if (!product) return;
+
+    const exists = cartItems.some((item) => item.id === product.id);
+
+    setSuccessMessage(exists ? "Quantity Increased!" : "Added to Basket!");
+
+    addToCart(product);
+    setShowSuccessModal(true);
+
+    // auto close modal
+    if (timerRef.current) clearTimeout(timerRef.current);
+
+    timerRef.current = setTimeout(() => {
+      setShowSuccessModal(false);
+    }, 2500);
   };
 
   const handleCardClick = () => {
@@ -62,6 +91,26 @@ export default function ProductCard({ product }) {
         </div>
         <div className="product-condition-badge">{product.condition}</div>
       </div>
+      <button className="add-to-cart-floating" onClick={handleAddToCart}>
+        <ShoppingCart />
+      </button>
+
+      {showSuccessModal && (
+        <div className="productdetails-success-modal-overlay">
+          <div className="productdetails-success-modal">
+            <button
+              className="productdetails-success-close"
+              onClick={() => setShowSuccessModal(false)}
+            >
+              <IoMdClose size={22} />
+            </button>
+
+            <h2>{successMessage}</h2>
+
+            <p>{product.name} has been added to your basket.</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

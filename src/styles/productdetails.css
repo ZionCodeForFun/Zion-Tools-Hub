@@ -288,73 +288,6 @@
   margin-bottom: 32px;
 }
 
-/* Desktop CTA Buttons */
-.productdetails-desktop-cta {
-  display: none;
-  gap: 12px;
-  margin-top: 32px;
-  padding-top: 24px;
-  border-top: 1px solid #f1f1f1;
-}
-
-.productdetails-desktop-cta-button {
-  flex: 1;
-  padding: 14px 24px;
-  border: none;
-  border-radius: 8px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  white-space: nowrap;
-}
-
-.productdetails-desktop-cta-basket {
-  background-color: #f5f5f5;
-  color: #333;
-  border: 1px solid #e0e0e0;
-}
-
-.productdetails-desktop-cta-basket:hover {
-  background-color: #e8e8e8;
-}
-
-.productdetails-desktop-cta-basket:active {
-  transform: scale(0.98);
-}
-
-.productdetails-desktop-cta-contact {
-  background-color: #d6590b;
-  color: #ffffff;
-}
-
-.productdetails-desktop-cta-contact:hover {
-  background-color: #b84709;
-}
-
-.productdetails-desktop-cta-contact:active {
-  transform: scale(0.98);
-}
-
-/* Sticky CTA Bar for Mobile */
-.productdetails-sticky-cta {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  gap: 8px;
-  padding: 12px;
-  background-color: #ffffff;
-  border-top: 1px solid #e0e0e0;
-  z-index: 100;
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
-}
-
 .productdetails-cta-button {
   flex: 1;
   padding: 12px 16px;
@@ -582,7 +515,192 @@
 .productdetails-success-button:active {
   transform: scale(0.98);
 }
+.order-form-section {
+  margin-top: 30px;
+}
 
+.order-form {
+  display: grid;
+  gap: 12px;
+}
+
+.order-form input,
+.order-form textarea {
+  width: 100%;
+  padding: 14px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 15px;
+  outline: none;
+  transition: 0.3s;
+}
+
+.order-form input:focus,
+.order-form textarea:focus {
+  border-color:  #b84709;
+}
+
+.order-form textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.order-submit-btn {
+  background: #d6590b;
+  color: white;
+  padding: 14px;
+  border-radius: 8px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.order-submit-btn:hover {
+  background:  #b84709;
+}
+
+/* Desktop layout */
+
+@media (min-width: 768px) {
+  .order-form {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .order-form textarea,
+  .order-submit-btn {
+    grid-column: span 2;
+  }
+}
+.productdetails-image-wrapper {
+  position: relative;
+}
+
+.image-add-basket-btn {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(6px);
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  z-index: 10;
+  transition: 0.3s;
+}
+
+.image-add-basket-btn:hover {
+  background:  #b84709;
+}
+.floating-contact-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #d6590b;
+  color: white;
+  border: none;
+  padding: 14px 20px;
+  border-radius: 40px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+  z-index: 999;
+  transition: 0.3s;
+}
+
+.floating-contact-btn:hover {
+  background:  #b84709;
+  transform: translateY(-2px);
+}
+@media (max-width: 600px) {
+  .image-add-basket-btn {
+    font-size: 13px;
+    padding: 9px 12px;
+  }
+
+  .floating-contact-btn {
+    bottom: 15px;
+    right: 15px;
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+}
+.order-success-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.order-success-modal {
+  background: white;
+  width: 90%;
+  max-width: 420px;
+  padding: 28px;
+  border-radius: 14px;
+  text-align: center;
+  position: relative;
+  animation: scaleIn 0.3s ease;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(.7);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.order-success-close {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.order-success-modal h2 {
+  color: #d6590b;
+  margin-bottom: 10px;
+}
+
+.order-success-actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.order-success-actions button {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.order-success-actions button:first-child {
+  background: #eee;
+}
+
+.order-success-actions button:last-child {
+  background: #d6590b;
+  color: white;
+}
 @media (min-width: 768px) {
   .productdetails-container {
     padding-bottom: 40px;

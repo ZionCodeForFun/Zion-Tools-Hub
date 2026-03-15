@@ -5,6 +5,7 @@
   border: 1px solid #f1f1f1;
   cursor: pointer;
   transition: all 0.2s;
+  position: relative;
 }
 
 .product-card:active {
@@ -162,4 +163,29 @@
   .product-image-indicator {
     width: 50px;
   }
+  
+}
+.add-to-cart-floating {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: #d6590b;
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+  z-index: 10;
+  transition: all 0.2s ease;
+}
+
+.add-to-cart-floating:hover {
+  background: #e85f00;
+  transform: scale(1.1);
 }

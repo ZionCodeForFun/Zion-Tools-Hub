@@ -83,7 +83,7 @@
 }
 
 .homeherovideoslider-cta {
-  background-color: #ff6b35;
+  background-color: #d6590b;
   color: #ffffff;
   padding: 1rem 2.5rem;
   font-size: 1.125rem;
@@ -173,7 +173,7 @@
 }
 
 .homeherovideoslider-dots li.slick-active .homeherovideoslider-dot {
-  background-color: #ff6b35;
+  background-color: #d6590b;
   width: 32px;
   border-radius: 5px;
 }
@@ -234,7 +234,11 @@
   font-weight: 600;
   margin: 0;
 }
-
+.homeherovideoslider-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 /* Tablet */
 @media (min-width: 768px) {
   .homeherovideoslider-slide-inner {

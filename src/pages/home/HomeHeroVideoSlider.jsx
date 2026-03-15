@@ -13,6 +13,8 @@ import "slick-carousel/slick/slick-theme.css";
 import "../../styles/HomeHeroVideoSlider.css";
 import angleGrinderVideo from "../../assets/video/Anglegrinder-web.mp4";
 import concreteVibratorVideo from "../../assets/video/Concretevibrator-web.mp4";
+import angleThumb from "../../assets/video/anglegrinder-thumb.jpg";
+import vibratorThumb from "../../assets/video/concretevibrator-thumb.jpg";
 import { useNavigate } from "react-router-dom";
 const HomeHeroVideoSlider = () => {
   const sliderRef = useRef(null);
@@ -111,13 +113,13 @@ const HomeHeroVideoSlider = () => {
                     loop
                     playsInline
                     preload="auto"
+                    poster={slide.id === 1 ? angleThumb : vibratorThumb}
                   >
                     <source src={slide.videoSrc} type="video/mp4" />
                     Your browser does not support the video tag.
                   </video>
                 </div>
 
-                {/* Content Overlay */}
                 <div className="homeherovideoslider-content-wrapper">
                   <div className="homeherovideoslider-content">
                     <h1 className="homeherovideoslider-title">{slide.title}</h1>

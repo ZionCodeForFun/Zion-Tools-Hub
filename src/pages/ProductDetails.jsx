@@ -12,7 +12,7 @@ import Spinner from "../components/Spinner";
 import "../styles/productdetails.css";
 import { IoMdClose } from "react-icons/io";
 import BackToHome from "../components/BackToHome";
-
+import emailjs from "emailjs-com";
 export default function ProductDetails() {
   const { id } = useParams();
   const { cartItems, addToCart } = useCart();
@@ -23,15 +23,64 @@ export default function ProductDetails() {
   const [successMessage, setSuccessMessage] = useState("");
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [showContactModal, setShowContactModal] = useState(false);
-
+  const [showOrderSuccessModal, setShowOrderSuccessModal] = useState(false);
+  const [loading, setLoading] = useState(false);
   const timerRef = useRef(null);
-
   const imageSliderRef = useRef(null);
   const relatedRef = useRef(null);
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 4;
 
+  const [orderForm, setOrderForm] = useState({
+    fullname: "",
+    phone: "",
+    whatsapp: "",
+    quantity: 1,
+    state: "",
+    address: "",
+  });
+
+  const handleOrderChange = (e) => {
+    setOrderForm({
+      ...orderForm,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleOrderSubmit = (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const templateParams = {
+      product_name: product.name,
+      price: product.price,
+      ...orderForm,
+    };
+
+    emailjs
+      .send(
+        "service_xr5txtw",
+        "template_9i20qjo",
+        templateParams,
+        "C-Hz0rSZBh6bitJ_K",
+      )
+
+      .then(() => {
+        setShowOrderSuccessModal(true);
+        setLoading(false);
+        setOrderForm({
+          fullname: "",
+          phone: "",
+          whatsapp: "",
+          quantity: 1,
+          state: "",
+          address: "",
+        });
+      })
+      .catch(() => {
+        alert("Network error. Try again.");
+      });
+  };
   useEffect(() => {
     if (products.length > 0) {
       const foundProduct = products.find((p) => p.id === id);
@@ -147,18 +196,57 @@ Please confirm availability.`;
       <BackToHome />
       <div className="productdetails-container">
         <div className="productdetails-image-section">
-          <div className="productdetails-image-slider" ref={imageSliderRef}>
-            {product.images.map((image, index) => (
-              <div key={index} className="productdetails-image-slide">
-                <img
-                  src={image}
-                  alt={`${product.name} - ${index + 1}`}
-                  className="productdetails-image"
-                  loading="lazy"
-                />
-              </div>
-            ))}
+          <div className="productdetails-image-wrapper">
+            <div className="productdetails-image-slider" ref={imageSliderRef}>
+              {product.images.map((image, index) => (
+                <div key={index} className="productdetails-image-slide">
+                  <img
+                    src={image}
+                    alt={`${product.name}-${index}`}
+                    className="productdetails-image"
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* NEW ADD TO BASKET OVERLAY */}
+            <button
+              className="image-add-basket-btn"
+              onClick={handleAddToBasket}
+            >
+              <CiShoppingBasket size={20} />
+              Add to Basket
+            </button>
           </div>
+          {showOrderSuccessModal && (
+            <div className="order-success-overlay">
+              <div className="order-success-modal">
+                <button
+                  className="order-success-close"
+                  onClick={() => setShowOrderSuccessModal(false)}
+                >
+                  <IoMdClose size={22} />
+                </button>
+
+                <h2>Order Sent Successfully 🎉</h2>
+
+                <p>
+                  Your order for <b>{product.name}</b> has been received. We
+                  will contact you shortly.
+                </p>
+
+                <div className="order-success-actions">
+                  <button onClick={() => navigate("/")}>
+                    Continue Shopping
+                  </button>
+
+                  <button onClick={() => setShowContactModal(true)}>
+                    Contact Us
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
           {product.images.length > 1 && (
             <div className="productdetails-image-indicators">
               {product.images.map((_, index) => (
@@ -194,13 +282,76 @@ Please confirm availability.`;
             </ul>
           </section>
 
-          {/* Description */}
           <section className="productdetails-section">
             <h2>Description</h2>
             <p>{product.description || "No description available."}</p>
           </section>
+          <section className="productdetails-section order-form-section">
+            <h2>Place Order</h2>
 
-          {/* Related Products */}
+            <form className="order-form" onSubmit={handleOrderSubmit}>
+              <input
+                type="text"
+                name="fullname"
+                placeholder="Full Name"
+                value={orderForm.fullname}
+                onChange={handleOrderChange}
+                required
+              />
+
+              <input
+                type="tel"
+                name="phone"
+                placeholder="Phone Number"
+                value={orderForm.phone}
+                onChange={handleOrderChange}
+                required
+              />
+
+              <input
+                type="tel"
+                name="whatsapp"
+                placeholder="WhatsApp Number"
+                value={orderForm.whatsapp}
+                onChange={handleOrderChange}
+              />
+
+              <input
+                type="number"
+                name="quantity"
+                placeholder="Quantity"
+                min="1"
+                value={orderForm.quantity}
+                onChange={handleOrderChange}
+                required
+              />
+
+              <input
+                type="text"
+                name="state"
+                placeholder="State"
+                value={orderForm.state}
+                onChange={handleOrderChange}
+                required
+              />
+
+              <textarea
+                name="address"
+                placeholder="Full Address"
+                value={orderForm.address}
+                onChange={handleOrderChange}
+                required
+              />
+
+              <button
+                disabled={loading}
+                type="submit"
+                className="order-submit-btn"
+              >
+                {loading ? "Submitting" : "Submit Order"}
+              </button>
+            </form>
+          </section>
           {relatedProducts.length > 0 && (
             <section className="productdetails-section" ref={relatedRef}>
               <h2>You May Also Like</h2>
@@ -246,41 +397,9 @@ Please confirm availability.`;
               )}
             </section>
           )}
-
-          <div className="productdetails-desktop-cta">
-            <button
-              onClick={handleAddToBasket}
-              className="productdetails-desktop-cta-button productdetails-desktop-cta-basket"
-            >
-              <CiShoppingBasket size={20} />
-              Add to Basket
-            </button>
-
-            <button
-              onClick={handleContactClick}
-              className="productdetails-desktop-cta-button productdetails-desktop-cta-contact"
-            >
-              Contact to Order
-            </button>
-          </div>
         </div>
       </div>
-      <div className="productdetails-sticky-cta">
-        <button
-          className="productdetails-cta-button productdetails-cta-basket"
-          onClick={handleAddToBasket}
-        >
-          <CiShoppingBasket size={18} />
-          Add to Basket
-        </button>
 
-        <button
-          className="productdetails-cta-button productdetails-cta-contact"
-          onClick={handleContactClick}
-        >
-          Contact to Order
-        </button>
-      </div>
       {showSuccessModal && (
         <div className="productdetails-success-modal-overlay">
           <div className="productdetails-success-modal">
@@ -344,7 +463,9 @@ Please confirm availability.`;
           </div>
         </div>
       )}
-
+      <button className="floating-contact-btn" onClick={handleContactClick}>
+        Contact Us
+      </button>
       <Footer />
     </div>
   );
