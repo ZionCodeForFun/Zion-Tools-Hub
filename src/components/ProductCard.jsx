@@ -58,6 +58,7 @@ export default function ProductCard({ product }) {
   }, [product.images]);
 
   return (
+    <>
     <div className="product-card" onClick={handleCardClick}>
       <div className="product-image-container">
         <div className="product-image-slider" ref={sliderRef}>
@@ -95,6 +96,7 @@ export default function ProductCard({ product }) {
         <ShoppingCart />
       </button>
 
+    </div>
       {showSuccessModal && (
         <div className="productdetails-success-modal-overlay">
           <div className="productdetails-success-modal">
@@ -111,6 +113,6 @@ export default function ProductCard({ product }) {
           </div>
         </div>
       )}
-    </div>
+      </>
   );
 }
