@@ -79,7 +79,7 @@ export default function ProductCard({ product }) {
         )}
 
         {product.free_delivery && (
-          <div className="product-badge">Free Delivery within Lagos</div>
+          <div className="product-badge">Free Delivery </div>
         )}
       </div>
 
